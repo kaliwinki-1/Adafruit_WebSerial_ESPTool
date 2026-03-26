@@ -12,21 +12,12 @@
     <link rel="apple-touch-icon" sizes="120x120" href="https://raw.githubusercontent.com/Fr4nkFletcher/Adafruit_WebSerial_ESPTool/main/fav/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="https://raw.githubusercontent.com/Fr4nkFletcher/Adafruit_WebSerial_ESPTool/main/fav/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="https://raw.githubusercontent.com/Fr4nkFletcher/Adafruit_WebSerial_ESPTool/main/fav/favicon-16x16.png">
-    <link rel="manifest" href="https://raw.githubusercontent.com/Fr4nkFletcher/Adafruit_WebSerial_ESPTool/main/fav/site.webmanifest">
-    <link rel="mask-icon" href="https://raw.githubusercontent.com/Fr4nkFletcher/Adafruit_WebSerial_ESPTool/main/fav/safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
 
     <script>
         if (window.location.hostname !== "localhost" && window.location.protocol === "http:") {
             window.location.href = "https:" + window.location.href.substring(5);
         }
     </script>
-
-    <style>
-        a:link { color: red; }
-        #butDisconnect i { color: red; }
-    </style>
 
     <link rel="stylesheet" href="https://use.typekit.net/qtk5kiq.css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
@@ -35,20 +26,14 @@
     <link rel="stylesheet" href="css/dark.css" id="dark" class="alternate" disabled />
 
     <script module>
-        window.esptoolPackage = import(
-            window.location.hostname === "localhost"
-                ? "https://cdn.jsdelivr.net/gh/adafruit/Adafruit_WebSerial_ESPTool@latest/dist/web/index.js"
-                : "https://cdn.jsdelivr.net/gh/adafruit/Adafruit_WebSerial_ESPTool@latest/dist/web/index.js"
-        );
+        window.esptoolPackage = import("https://cdn.jsdelivr.net/gh/adafruit/Adafruit_WebSerial_ESPTool@latest/dist/web/index.js");
     </script>
     <script src="js/variables.js" module defer></script>
     <script src="js/script.js" module defer></script>
 </head>
 <body>
     <header class="header">
-        <div class="left">
-            <img src="assets/logo0.png" class="Adafruit-Logo">
-        </div>
+        <div class="left"><img src="assets/logo0.png" class="Adafruit-Logo"></div>
         <div class="right">
             <p class="top-text"><font face="Tahoma, Verdana, Arial" color="white" size="2">Current Version: &nbsp;</font></p>
             <p class="top-text"><font face="Tahoma, Verdana, Arial" color="#fc9999" size="2"><b>v1.11.0 CYD2USB ONLY FOR KALIWINKI</b></font></p>
@@ -68,8 +53,7 @@
                 <div class="upload">
                     <label class="firmware">
                         <div class="model-select">
-                            <!-- MENU DÉROULANT CORRIGÉ -->
-                            <select id="modelSelect" class="dropdown" style="background-color: #333; color: white;">
+                            <select id="modelSelect" class="dropdown" style="background-color:#333;color:white;">
                                 <option value="NULL" disabled selected><b>--- SELECT BOARD ---</b></option>
                                 <optgroup label="+CYD2USB ESP32-2432S028R 2.8&quot; CYD ">
                                     <option value="CYD2USB_MARAUDER">- Marauder CYD2USB</option>
@@ -77,56 +61,4 @@
                                     <option value="CYD2USB_BRUCE">- Bruce CYD2USB</option>
                                 </optgroup>
                             </select>
-
-                            <select id="versionSelect" class="dropdown" style="background-color: #333; color: white;">
-                                <option value="latest">Current 1.11.0</option>
-                            </select>
-                        </div>
-                    </label>
-                    <br><br>
-                </div>
-
-                <div class="buttons">
-                    &nbsp;&nbsp;&nbsp;<a id="butProgram"><i class="fas fa-upload"></i> Program</a>&nbsp;&nbsp;
-                    <a id="butErase"><i class="fas fa-trash"></i> Erase</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                </div>
-            </div>
-
-            <div id="flashMessages" class="flashMessages"></div>
-            <div id="log"></div>
-        </div>
-    </main>
-
-    <footer class="footer">
-        <div class="controls">
-            <div>
-                <label for="autoscroll">Autoscroll </label>
-                <div class="onoffswitch">
-                    <input type="checkbox" name="autoscroll" class="onoffswitch-checkbox" id="autoscroll" checked>
-                    <label class="onoffswitch-label" for="autoscroll">
-                        <span class="onoffswitch-inner"></span>
-                        <span class="onoffswitch-switch"></span>
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="center">
-            <i class="fab fa-github"></i> 
-            <a href="https://github.com/Fr4nkFletcher/ESP32-Marauder-Cheap-Yellow-Display">Cheap-Yellow-Marauder</a> 
-            &mdash; powered by 
-            <a href="https://github.com/Fr4nkFletcher/Adafruit_WebSerial_ESPTool">Adafruit WebSerial ESPTool</a> 
-            <i class="fas fa-flask"></i>
-        </div>
-    </footer>
-
-    <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
-    <script>
-        kofiWidgetOverlay.draw('fr4nkfletcher', {
-            'type': 'floating-chat',
-            'floating-chat.donateButton.text': 'Donate',
-            'floating-chat.donateButton.background-color': '#282a36',
-            'floating-chat.donateButton.text-color': '#ff9999'
-        });
-    </script>
-</body>
-</html>
+                            <select id="versionSelect" class
