@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <title>CYM WebFlasher - CYD2USB ONLY</title>
+  <head>
+    <title>CYM WebFlasher</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width" />
     <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0">
     <meta http-equiv="expires" content="0">
     <meta http-equiv="pragma" content="no-cache">
-    
-    <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="120x120" href="https://raw.githubusercontent.com/Fr4nkFletcher/Adafruit_WebSerial_ESPTool/main/fav/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="https://raw.githubusercontent.com/Fr4nkFletcher/Adafruit_WebSerial_ESPTool/main/fav/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="https://raw.githubusercontent.com/Fr4nkFletcher/Adafruit_WebSerial_ESPTool/main/fav/favicon-16x16.png">
@@ -17,122 +15,155 @@
     <link rel="mask-icon" href="https://raw.githubusercontent.com/Fr4nkFletcher/Adafruit_WebSerial_ESPTool/main/fav/safari-pinned-tab.svg" color="#5bbad5">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
-
     <script>
-        if (window.location.hostname !== "localhost" && window.location.protocol === "http:") {
-            window.location.href = "https:" + window.location.href.substring(5);
-        }
+      if (
+        window.location.hostname !== "localhost" &&
+        window.location.protocol === "http:"
+      ) {
+        window.location.href = "https:" + window.location.href.substring(5);
+      }
     </script>
-
     <style>
-        a:link { color: red; }
-        #butDisconnect i { color: red; }
+      a:link {
+        color: red;
+      }
     </style>
-
-    <link rel="stylesheet" href="https://use.typekit.net/qtk5kiq.css" />
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/light.css" id="light" class="alternate" disabled />
-    <link rel="stylesheet" href="css/dark.css" id="dark" class="alternate" disabled />
-
-    <script module>
-        window.esptoolPackage = import(
-            window.location.hostname === "localhost"
-                ? "https://cdn.jsdelivr.net/gh/adafruit/Adafruit_WebSerial_ESPTool@latest/dist/web/index.js"
-                : "https://cdn.jsdelivr.net/gh/adafruit/Adafruit_WebSerial_ESPTool@latest/dist/web/index.js"
-        );
+    <style>
+        #butDisconnect i {
+            color: red;
+        }
+    </style>
+  <link rel="stylesheet" href="https://use.typekit.net/qtk5kiq.css" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/style.css" />
+   <link
+      rel="stylesheet"
+      href="css/light.css"
+      id="light"
+      class="alternate"
+      disabled
+    />
+    <link
+      rel="stylesheet"
+      href="css/dark.css"
+      id="dark"
+      class="alternate"
+      disabled
+    />
+    <script type="module">
+      window.esptoolPackage = import(
+        window.location.hostname === "localhost"
+          ? "https://cdn.jsdelivr.net/gh/adafruit/Adafruit_WebSerial_ESPTool@latest/dist/web/index.js"
+          : "https://cdn.jsdelivr.net/gh/adafruit/Adafruit_WebSerial_ESPTool@latest/dist/web/index.js"
+      );
     </script>
-    <script src="js/variables.js" module defer></script>
-    <script src="js/script.js" module defer></script>
-</head>
-
-<body>
+    <script src="js/variables.js" type="module" defer></script>
+   <script src="js/script.js" type="module" defer></script>
+  </head>
+  <body>
     <header class="header">
-        <div class="left">
-            <img src="assets/logo0.png" class="Adafruit-Logo">
-        </div>
-        <div class="right">
-            <p class="top-text">
-                <font face="Tahoma, Verdana, Arial" color="white" size="2">Current Version: &nbsp;</font>
-            </p>
-            <p class="top-text">
-                <font face="Tahoma, Verdana, Arial" color="#fc9999" size="2"><b>v1.11.0 CYD2USB ONLY FOR KALIWINKI</b></font>
-            </p>
-        </div>
-    </header>
-
+      <div class="left">
+        <img src="assets/logo0.png" class="Adafruit-Logo">
+      </div>
+      <div class="right">
+        <p class="top-text">
+        <font face="Tahoma, Verdana, Arial" color="white" size="2">Current Version:  </font></p>
+<p class="top-text">
+        <font face="Tahoma, Verdana, Arial" color="#fc9999" size="2"><b>v1.11.0 CYD2USB ONLY FOR KALIWINKI</b></font></p>
+      </div>
+      </header>
+     
     <main class="main">
-        <div class="subheader">
-            &nbsp;&nbsp;<a id="butConnect"><i class="fas fa-plug"></i> Connect</a>
-            <a id="butDisconnect" style="display: none;"><i class="far fa-window-close"></i> Disconnect</a>
-            &nbsp;<a id="butSerialTerminal" href="https://fr4nkfletcher.github.io/Adafruit_WebSerial_ESPTool/serial_terminal.html"><i class="fas fa-keyboard"></i> Serial Terminal</a>
-            &nbsp;<a id="butClear"><i class="fas fa-eraser"></i> Clear Text</a>
+  <div class="subheader">
+      <a id="butConnect"><i class="fas fa-plug"></i> Connect</a>
+    <a id="butDisconnect"style="display: none;"><i class="far fa-window-close"></i> Disconnect</a>
+     <a id="butSerialTerminal" href="https://fr4nkfletcher.github.io/Adafruit_WebSerial_ESPTool/serial_terminal.html"><i class="fas fa-keyboard"></i> Serial Terminal</a>
+     <a id="butClear"><i class="fas fa-eraser"></i> Clear Text</a>
+    <div class="right">
+  </div>
+</div>
         </div>
-
-        <div id="app">
-            <div id="commands" class="connected">
-                <div class="upload">
-                    <label class="firmware">
-                        <div class="model-select">
-                            <select id="modelSelect" class="dropdown" style="background-color: #333; color: white;">
-                                <option value="NULL" disabled selected style="display:none;"><b>--- SELECT BOARD ---</b></option>
-                                <optgroup label="+CYD2USB ESP32-2432S028R 2.8&quot; CYD ">
-                                    <option value="CYD2USB_MARAUDER">- Marauder CYD2USB</option>
-                                    <option value="CYD2USB_HALEHOUND">- HaleHound CYD2USB</option>
-                                    <option value="CYD2USB_BRUCE">- Bruce CYD2USB</option>
-                                </optgroup>
-                            </select>
-
-                            <select id="versionSelect" class="dropdown" style="background-color: #333; color: white;">
-                                <option value="NULL" disabled selected style="display:none;"><b>--- VERSION ---</b></option>
-                                <option value="latest">Current 1.11.0</option>
-                            </select>
-                        </div>
-                    </label>
-                    <br><br>
-                </div>
-
-                <div class="buttons">
-                    &nbsp;&nbsp;&nbsp;<a id="butProgram"><i class="fas fa-upload"></i> Program</a>&nbsp;&nbsp;
-                    <a id="butErase"><i class="fas fa-trash"></i> Erase</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                </div>
-            </div>
-
-            <div id="flashMessages" class="flashMessages"></div>
-            <div id="log"></div>
+      </div>
+ <div id="app">
+        <div id="commands" class="connected">
+          <div class="upload">
+            <label class="firmware">
+              <div class="model-select">
+               
+                <select id="modelSelect" class="dropdown"style="background-color: #333; color: white;">
+                  <option value="NULL" disabled selected style="display:none;"><b>--- SELECT BOARD ---</b></option>
+                  <optgroup label="--- SELECT BOARD ---">
+            <optgroup label="+CYD2USB ESP32-2432S028R 2.8&quot; CYD ">
+            <option value="CYD2USB_MARAUDER">- Marauder CYD2USB</option>
+            <option value="CYD2USB_HALEHOUND">- HaleHound CYD2USB</option>
+            <option value="CYD2USB_BRUCE">- Bruce CYD2USB</option>
+          </optgroup>
+                </select>
+                <select id="versionSelect" class="dropdown" style="background-color: #333; color: white;">
+                  <option value="NULL" disabled selected style="display:none;"><b>--- VERSION ---</b></option>
+                  <optgroup label="--- VERSION ---"></optgroup>
+                  <option value="latest">Current 1.11.0</option>
+                </select>
+   
+              </div>
+<style>
+    #commands::-webkit-scrollbar {
+        display: none;
+    }
+    #commands {
+        overflow-y: auto; 
+    }
+</style>
+            </label>
+            <br><br>
+          </div>
+          <div class="buttons">
+               <a id="butProgram"><i class="fas fa-upload"></i> Program</a>  
+            <a id="butErase"><i class="fas fa-trash"></i> Erase</a>       
+          
+          </div>
         </div>
+        <div id="flashMessages" class="flashMessages"></div>
+       
+        <div id="log"></div>
+      </div>
     </main>
-
     <footer class="footer">
-        <div class="controls">
-            <div>
-                <label for="autoscroll">Autoscroll </label>
-                <div class="onoffswitch">
-                    <input type="checkbox" name="autoscroll" class="onoffswitch-checkbox" id="autoscroll" checked>
-                    <label class="onoffswitch-label" for="autoscroll">
-                        <span class="onoffswitch-inner"></span>
-                        <span class="onoffswitch-switch"></span>
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="center">
-            <i class="fab fa-github"></i> 
-            <a href="https://github.com/Fr4nkFletcher/ESP32-Marauder-Cheap-Yellow-Display">Cheap-Yellow-Marauder</a> 
-            &mdash; powered by 
-            <a href="https://github.com/Fr4nkFletcher/Adafruit_WebSerial_ESPTool">Adafruit WebSerial ESPTool</a> 
-            <i class="fas fa-flask"></i>
-        </div>
+  <div class="controls">
+    <div>
+      <label for="autoscroll">Autoscroll </label>
+      <div class="onoffswitch">
+        <input type="checkbox" name="autoscroll" class="onoffswitch-checkbox" id="autoscroll" checked>
+        <label class="onoffswitch-label" for="autoscroll">
+          <span class="onoffswitch-inner"></span>
+          <span class="onoffswitch-switch"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="center">
+    <i class="fab fa-github"></i> <a href="https://github.com/Fr4nkFletcher/ESP32-Marauder-Cheap-Yellow-Display">Cheap-Yellow-Marauder</a> &mdash;
+    powered by <a href="https://github.com/Fr4nkFletcher/Adafruit_WebSerial_ESPTool">Adafruit WebSerial ESPTool</a> <i class="fas fa-flask"></i>
+  </div>
+  <div class="controls">
+   
+  
+  </div>
+</footer>
+    </div>
     </footer>
-
-    <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
-    <script>
-        kofiWidgetOverlay.draw('fr4nkfletcher', {
-            'type': 'floating-chat',
-            'floating-chat.donateButton.text': 'Donate',
-            'floating-chat.donateButton.background-color': '#282a36',
-            'floating-chat.donateButton.text-color': '#ff9999'
-        });
-    </script>
+<script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+ <script>
+  kofiWidgetOverlay.draw('fr4nkfletcher', {
+    'type': 'floating-chat',
+    'floating-chat.donateButton.text': 'Donate',
+    'floating-chat.donateButton.background-color': '#282a36',
+    'floating-chat.donateButton.text-color': '#ff9999'
+  });
+ </script>
+ <style>
+.floatingchat-container-wrap { left:unset; bottom:11px; right:145px; top: unset; }
+.floating-chat-kofi-popup-iframe { left:unset; bottom:unset; right:16px; top: 83px; }
+</style>
 </body>
 </html>
