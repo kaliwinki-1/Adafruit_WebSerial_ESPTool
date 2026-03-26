@@ -5,8 +5,6 @@
 const commonBootloader = 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin';
 const commonPartitions = 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin';
 
-// ====================== TES 3 VARIANTS ======================
-
 const MCYD2USBMarauderFiles = {
     'bootloader': commonBootloader,
     'partitions': commonPartitions,
