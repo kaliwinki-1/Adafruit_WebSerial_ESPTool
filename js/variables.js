@@ -1,24 +1,20 @@
-// ================================================
-// js/variables.js - VERSION POUR TOI (3 options seulement)
-// ================================================
-
-const commonBootloader = 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin';
-const commonPartitions = 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin';
-
+// Groupe pour Marauder
 const MCYD2USBMarauderFiles = {
-    'bootloader': commonBootloader,
-    'partitions': commonPartitions,
-    'firmware': 'resources/CURRENT/marauder.bin',
+    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
+    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
+    'firmware': 'resources/CURRENT/ton_firmware_marauder.bin', // <--- TON FICHIER ICI
 };
 
+// Groupe pour HaleHound
 const MCYD2USBHaleHoundFiles = {
-    'bootloader': commonBootloader,
-    'partitions': commonPartitions,
-    'firmware': 'resources/CURRENT/halehound.bin',
+    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
+    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
+    'firmware': 'resources/CURRENT/ton_firmware_halehound.bin', // <--- TON FICHIER ICI
 };
 
+// Groupe pour Bruce
 const MCYD2USBBruceFiles = {
-    'bootloader': commonBootloader,
-    'partitions': commonPartitions,
-    'firmware': 'resources/CURRENT/bruce.bin',
+    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
+    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
+    'firmware': 'resources/CURRENT/ton_firmware_bruce.bin', // <--- TON FICHIER ICI
 };
