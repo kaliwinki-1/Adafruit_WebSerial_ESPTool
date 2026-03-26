@@ -2,6 +2,8 @@
 let espStub;
 const baudRates = 115200;
 const bufferSize = 512;
+const colors = ["#00a7e9", "#f89521", "#be1e2d"];
+const measurementPeriodId = "0001";
 const maxLogLength = 100;
 
 const log = document.getElementById("log");
@@ -10,9 +12,14 @@ const butClear = document.getElementById("butClear");
 const butErase = document.getElementById("butErase");
 const butProgram = document.getElementById("butProgram");
 const autoscroll = document.getElementById("autoscroll");
+const lightSS = document.getElementById("light");
+const darkSS = document.getElementById("dark");
+const darkMode = document.getElementById("darkmode");
 const modelSelect = document.getElementById("modelSelect");
 const versionSelect = document.getElementById("versionSelect");
 
+const offsets = [0x1000, 0x8000, 0xE000, 0x10000];
+const offsets2 = [0x0, 0x8000, 0xE000, 0x10000];
 const appDiv = document.getElementById("app");
 
 document.getElementById('butConnect').addEventListener('click', function() {
@@ -124,13 +131,9 @@ async function clickConnect() {
 async function clickErase() {
     initMsg(` `);
     initMsg(` !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! `);
-    initMsg(` !!! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CAUTION!!! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; !!! `);
-    initMsg(` !!! &nbsp;&nbsp;THIS WILL ERASE THE FIRMWARE ON&nbsp; !!! `);
-    initMsg(` !!! &nbsp;&nbsp;&nbsp;YOUR DEVICE! THIS CAN NOT BE &nbsp;&nbsp; !!! `);
-    initMsg(` !!! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; UNDONE! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; !!! `);
+    initMsg(` !!! CAUTION!!! THIS WILL ERASE THE FIRMWARE !!! `);
     initMsg(` !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! `);
-    initMsg(` `);
-    if (window.confirm("This will erase the entire flash. Click OK to continue.")) {
+    if (window.confirm("Erase entire flash?")) {
         butErase.disabled = true;
         butProgram.disabled = true;
         try {
@@ -138,9 +141,7 @@ async function clickErase() {
             let stamp = Date.now();
             await espStub.eraseFlash();
             logMsg(`Finished. Took <font color="yellow">` + (Date.now() - stamp) + `ms</font> to erase.`);
-            compMsg(" ");
             compMsg(" ---> ERASING PROCESS COMPLETED!");
-            compMsg(" ");
         } catch (e) {
             errorMsg(e);
         } finally {
@@ -186,8 +187,6 @@ async function clickProgram() {
     initMsg(` !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! `);
     initMsg(` `);
 
-    flashMessages.innerHTML = "";
-
     const fileTypes = ['bootloader', 'partitions', 'firmware'];
     const offsetsMap = {
         "CYD2USB_MARAUDER": [0x1000, 0x8000, 0x10000],
@@ -210,7 +209,6 @@ async function clickProgram() {
             let contents = await readUploadedFileAsArrayBuffer(binFile);
             await espStub.flashData(contents, updateProgressBar, offset);
             annMsg(` ---> Finished flashing ${fileType}.`);
-            annMsg(` `);
             await sleep(100);
         } catch (e) {
             errorMsg(e);
