@@ -1,11 +1,11 @@
 // ================================================
-// js/variables.js - VERSION FINALE POUR TOI
+// js/variables.js - VERSION POUR TOI (3 options seulement)
 // ================================================
 
 const commonBootloader = 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin';
 const commonPartitions = 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin';
 
-// ====================== TES 3 VARIANTS SEULEMENT ======================
+// ====================== TES 3 VARIANTS CYD2USB ======================
 
 const MCYD2USBMarauderFiles = {
     'bootloader': commonBootloader,
