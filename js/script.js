@@ -1,6 +1,4 @@
 <script>
-// ====================== js/script.js - VERSION QUI DOIT MARCHER ======================
-
 let espStub;
 const baudRates = 115200;
 const maxLogLength = 100;
@@ -12,8 +10,18 @@ const butErase = document.getElementById("butErase");
 const butProgram = document.getElementById("butProgram");
 const autoscroll = document.getElementById("autoscroll");
 const modelSelect = document.getElementById("modelSelect");
+const versionSelect = document.getElementById("versionSelect");
 
 const appDiv = document.getElementById("app");
+
+document.getElementById('butConnect').addEventListener('click', function() {
+    var icon = this.querySelector('i');
+    if (icon.classList.contains('green-icon')) {
+        icon.classList.remove('green-icon');
+    } else {
+        icon.classList.add('green-icon');
+    }
+});
 
 document.addEventListener("DOMContentLoaded", () => {
     butConnect.addEventListener("click", () => {
@@ -31,8 +39,11 @@ document.addEventListener("DOMContentLoaded", () => {
     autoscroll.addEventListener("click", clickAutoscroll);
 
     const notSupported = document.getElementById("notSupported");
-    if ("serial" in navigator) notSupported.classList.add("hidden");
-    else notSupported.classList.remove("hidden");
+    if ("serial" in navigator) {
+        notSupported.classList.add("hidden");
+    } else {
+        notSupported.classList.remove("hidden");
+    }
 
     modelSelect.addEventListener("change", checkDropdowns);
     checkDropdowns();
@@ -50,17 +61,17 @@ function logMsg(text) {
 }
 
 function annMsg(text) {
-    log.innerHTML += `<font color='#FF9999'>${text}<br></font>`;
+    log.innerHTML += `<font color='#FF9999'>` + text + `<br></font>`;
     log.scrollTop = log.scrollHeight;
 }
 
 function compMsg(text) {
-    log.innerHTML += `<font color='#2ED832'>${text}<br></font>`;
+    log.innerHTML += `<font color='#2ED832'>` + text + `<br></font>`;
     log.scrollTop = log.scrollHeight;
 }
 
 function initMsg(text) {
-    log.innerHTML += `<font color='#F72408'>${text}<br></font>`;
+    log.innerHTML += `<font color='#F72408'>` + text + `<br></font>`;
     log.scrollTop = log.scrollHeight;
 }
 
@@ -87,6 +98,15 @@ async function clickErase() {
 }
 
 async function clickProgram() {
+    const readUploadedFileAsArrayBuffer = (inputFile) => {
+        const reader = new FileReader();
+        return new Promise((resolve, reject) => {
+            reader.onerror = () => { reader.abort(); reject(new DOMException("Problem parsing input file.")); };
+            reader.onload = () => resolve(reader.result);
+            reader.readAsArrayBuffer(inputFile);
+        });
+    };
+
     const selectedModel = modelSelect.value;
 
     const modelFilesMap = {
@@ -97,7 +117,7 @@ async function clickProgram() {
 
     const selectedFiles = modelFilesMap[selectedModel];
     if (!selectedFiles) {
-        errorMsg(`Aucun fichier trouvé pour ${selectedModel}`);
+        errorMsg(`No files found for model: ${selectedModel}`);
         return;
     }
 
@@ -109,8 +129,10 @@ async function clickProgram() {
 
     initMsg(` `);
     initMsg(` !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! `);
-    initMsg(` !!! FLASHING STARTED - NE DÉBRANCHE PAS !!! `);
+    initMsg(` !!! FLASHING STARTED! DO NOT UNPLUG !!! `);
+    initMsg(` !!! UNTIL FLASHING IS COMPLETE!! !!! `);
     initMsg(` !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! `);
+    initMsg(` `);
 
     const fileTypes = ['bootloader', 'partitions', 'firmware'];
     const offsetsMap = {
@@ -119,7 +141,7 @@ async function clickProgram() {
         "CYD2USB_BRUCE": [0x1000, 0x8000, 0x10000]
     };
 
-    const updateProgress = (size) => {
+    const updateProgressBar = (cumulativeFlashedSize) => {
         const progress = document.getElementById("progress");
         if (progress) progress.style.width = "100%";
     };
@@ -130,18 +152,11 @@ async function clickProgram() {
         const offset = offsetsMap[selectedModel][i];
 
         try {
-            const response = await fetch(fileResource);
-            const blob = await response.blob();
-            const binFile = new File([blob], fileType + ".bin");
-            const contents = await new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = reject;
-                reader.readAsArrayBuffer(binFile);
-            });
-
-            await espStub.flashData(contents, updateProgress, offset);
-            annMsg(` ---> ${fileType} flashé`);
+            let binFile = new File([await fetch(fileResource).then(r => r.blob())], fileType + ".bin");
+            let contents = await readUploadedFileAsArrayBuffer(binFile);
+            await espStub.flashData(contents, updateProgressBar, offset);
+            annMsg(` ---> Finished flashing ${fileType}.`);
+            await sleep(100);
         } catch (e) {
             errorMsg(e);
         }
@@ -150,29 +165,57 @@ async function clickProgram() {
     progressBarDialog.remove();
     butErase.disabled = false;
     butProgram.disabled = false;
-    compMsg(" ---> FLASHING TERMINÉ !");
-    logMsg("Redémarre ta carte.");
+    compMsg(" ---> FLASHING PROCESS COMPLETED!");
+    logMsg("Restart the board or disconnect to use the device.");
 }
 
 function createProgressBarDialog() {
-    // (code simplifié - tu peux le remettre si tu veux la barre de progression)
     const div = document.createElement("div");
+    div.id = "progressBarDialog";
     div.style.position = "fixed";
-    div.style.top = "50%";
     div.style.left = "50%";
+    div.style.top = "50%";
     div.style.transform = "translate(-50%, -50%)";
-    div.style.background = "#333";
-    div.style.padding = "30px";
+    div.style.padding = "40px";
+    div.style.backgroundColor = "#333333";
+    div.style.border = "2px solid #6272a4";
     div.style.borderRadius = "10px";
     div.style.color = "white";
-    div.innerHTML = `<div>Flashing en cours...</div>`;
+    div.style.zIndex = "1000";
+    div.style.fontSize = "1.5em";
+    div.innerHTML = `
+        <div style="margin-bottom: 10px; color: #f8f8f2;">Flashing...</div>
+        <div style="width: 100%; background-color: #44475a; border: 1px solid #e0e0e0; border-radius: 4px;">
+            <div id="progress" style="width: 0%; height: 20px; background-color: #6272a4; border-radius: 4px; transition: width 0.5s ease;"></div>
+        </div>
+    `;
     document.body.appendChild(div);
     return div;
 }
 
-async function clickConnect() { /* ton code original reste ici si tu veux */ }
-async function clickClear() { log.innerHTML = ""; }
-function checkDropdowns() { butProgram.disabled = false; }
-function toggleUIConnected(connected) { /* ton code original */ }
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+async function clickConnect() {
+    // ton code original de connexion (garde-le si tu l'as déjà)
+}
+
+async function clickClear() {
+    log.innerHTML = "";
+}
+
+function checkDropdowns() {
+    butProgram.disabled = false;
+}
+
+function toggleUIConnected(connected) {
+    let label = "Connect";
+    let iconClass = "fas fa-plug";
+    if (connected) {
+        label = "Disconnect";
+        iconClass = "far fa-window-close red-icon";
+    }
+    document.getElementById('butConnect').innerHTML = `<i class="${iconClass}"></i> ${label}`;
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 </script>
