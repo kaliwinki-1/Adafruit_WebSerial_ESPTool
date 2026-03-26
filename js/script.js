@@ -36,9 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
         clickConnect().catch(async (e) => {
             console.error(e);
             errorMsg(e.message || e);
-            if (espStub) {
-                await espStub.disconnect();
-            }
+            if (espStub) await espStub.disconnect();
             toggleUIConnected(false);
         });
     });
