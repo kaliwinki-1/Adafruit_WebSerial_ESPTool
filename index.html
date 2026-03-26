@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <title>CYM WebFlasher - CYD2USB</title>
+    <title>CYM WebFlasher - CYD2USB Edition</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0">
+    <meta http-equiv="cache-control" content="no-cache, must-revalidate">
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
     
     <script type="module">
         window.esptoolPackage = import("https://cdn.jsdelivr.net/gh/adafruit/Adafruit_WebSerial_ESPTool@latest/dist/web/index.js");
     </script>
-
     <script src="js/variables.js" defer></script>
     <script src="js/script.js" defer></script>
 </head>
 <body>
     <header class="header">
-        <div class="left"><img src="assets/logo0.png" class="Adafruit-Logo"></div>
+        <div class="left"><img src="assets/logo0.png" class="Adafruit-Logo" alt="Logo"></div>
         <div class="right">
             <p class="top-text"><font color="white">Version: </font><b>v1.11.0 CYD2USB</b></p>
         </div>
@@ -24,29 +24,32 @@
 
     <main class="main">
         <div class="subheader">
-            <a id="butConnect">Connecter</a>
-            <a id="butDisconnect" style="display: none;">Déconnecter</a>
-            <a id="butClear">Effacer Log</a>
+            <a id="butConnect"><i class="fas fa-plug"></i> Connecter</a>
+            <a id="butDisconnect" style="display: none;"><i class="far fa-window-close"></i> Déconnecter</a>
+            <a id="butClear"><i class="fas fa-eraser"></i> Effacer Log</a>
         </div>
 
         <div id="app">
             <div id="commands" class="connected">
                 <div class="upload">
-                    <select id="modelSelect" class="dropdown">
-                        <option value="NULL" disabled selected>--- SELECT BOARD ---</option>
-                        <option value="CYD2USB_MARAUDER">Marauder CYD2USB</option>
-                        <option value="CYD2USB_HALEHOUND">HaleHound CYD2USB</option>
-                        <option value="CYD2USB_BRUCE">Bruce CYD2USB</option>
-                    </select>
-                    <select id="versionSelect" class="dropdown">
-                        <option value="latest">Version Actuelle</option>
-                    </select>
+                    <label class="firmware">
+                        <select id="modelSelect" class="dropdown" style="background-color: #333; color: white;">
+                            <option value="NULL" disabled selected>--- CHOISIR LE BOARD ---</option>
+                            <option value="CYD2USB_MARAUDER">Marauder CYD2USB</option>
+                            <option value="CYD2USB_HALEHOUND">HaleHound CYD2USB</option>
+                            <option value="CYD2USB_BRUCE">Bruce CYD2USB</option>
+                        </select>
+                        <select id="versionSelect" class="dropdown" style="background-color: #333; color: white;">
+                            <option value="latest">Current v1.11.0</option>
+                        </select>
+                    </label>
                 </div>
                 <div class="buttons">
-                    <a id="butProgram">Flasher</a>
-                    <a id="butErase">Tout Effacer (Erase)</a>
+                    <a id="butProgram"><i class="fas fa-upload"></i> Flasher</a>
+                    <a id="butErase"><i class="fas fa-trash"></i> Erase Flash</a>
                 </div>
             </div>
+            <div id="flashMessages" class="flashMessages"></div>
             <div id="log"></div>
         </div>
     </main>
