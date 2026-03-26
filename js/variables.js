@@ -1,18 +1,26 @@
-// Configuration globale avec les noms de fichiers exacts
+// ================================================
+// js/variables.js - CORRIGÉ POUR TES NOMS DE FICHIERS
+// ================================================
+
+const commonBootloader = 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin';
+const commonPartitions = 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin';
+
+// ====================== TES 3 VARIANTS ======================
+
 const MCYD2USBMarauderFiles = {
-    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
-    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
-    'firmware': 'resources/CURRENT/marauder.bin'
+    'bootloader': commonBootloader,
+    'partitions': commonPartitions,
+    'firmware': 'resources/CURRENT/marauder.bin',
 };
 
 const MCYD2USBHaleHoundFiles = {
-    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
-    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
-    'firmware': 'resources/CURRENT/halehound.bin'
+    'bootloader': commonBootloader,
+    'partitions': commonPartitions,
+    'firmware': 'resources/CURRENT/halehound.bin',
 };
 
 const MCYD2USBBruceFiles = {
-    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
-    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
-    'firmware': 'resources/CURRENT/bruce.bin'
+    'bootloader': commonBootloader,
+    'partitions': commonPartitions,
+    'firmware': 'resources/CURRENT/bruce.bin',
 };
