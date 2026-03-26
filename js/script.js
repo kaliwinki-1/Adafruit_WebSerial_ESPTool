@@ -83,17 +83,28 @@ function errorMsg(text) {
 async function clickErase() {
     initMsg(` `);
     initMsg(` !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! `);
-    initMsg(` !!! CAUTION!!! THIS WILL ERASE THE FIRMWARE !!! `);
+    initMsg(` !!! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CAUTION!!! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; !!! `);
+    initMsg(` !!! &nbsp;&nbsp;THIS WILL ERASE THE FIRMWARE ON&nbsp; !!! `);
+    initMsg(` !!! &nbsp;&nbsp;&nbsp;YOUR DEVICE! THIS CAN NOT BE &nbsp;&nbsp; !!! `);
+    initMsg(` !!! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; UNDONE! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; !!! `);
     initMsg(` !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! `);
-    if (window.confirm("Erase entire flash?")) {
+    initMsg(` `);
+    if (window.confirm("This will erase the entire flash. Click OK to continue.")) {
         butErase.disabled = true;
         butProgram.disabled = true;
         try {
-            logMsg("Erasing flash...");
+            logMsg("Erasing flash memory. Please wait...");
+            let stamp = Date.now();
             await espStub.eraseFlash();
-            compMsg(" ---> ERASING COMPLETED!");
-        } catch (e) { errorMsg(e); }
-        finally { butProgram.disabled = false; }
+            logMsg(`Finished. Took <font color="yellow">` + (Date.now() - stamp) + `ms</font> to erase.`);
+            compMsg(" ");
+            compMsg(" ---> ERASING PROCESS COMPLETED!");
+            compMsg(" ");
+        } catch (e) {
+            errorMsg(e);
+        } finally {
+            butProgram.disabled = false;
+        }
     }
 }
 
@@ -108,6 +119,7 @@ async function clickProgram() {
     };
 
     const selectedModel = modelSelect.value;
+    const selectedVersion = versionSelect.value;
 
     const modelFilesMap = {
         "CYD2USB_MARAUDER": MCYD2USBMarauderFiles,
@@ -134,7 +146,12 @@ async function clickProgram() {
     initMsg(` !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! `);
     initMsg(` `);
 
-    const fileTypes = ['bootloader', 'partitions', 'firmware'];
+    flashMessages.innerHTML = "";
+
+    let totalSize = 0;
+    let flashedSize = 0;
+    let fileTypes = ['bootloader', 'partitions', 'firmware'];
+
     const offsetsMap = {
         "CYD2USB_MARAUDER": [0x1000, 0x8000, 0x10000],
         "CYD2USB_HALEHOUND": [0x1000, 0x8000, 0x10000],
@@ -142,8 +159,10 @@ async function clickProgram() {
     };
 
     const updateProgressBar = (cumulativeFlashedSize) => {
-        const progress = document.getElementById("progress");
-        if (progress) progress.style.width = "100%";
+        flashedSize = cumulativeFlashedSize;
+        const progressPercentage = Math.min((flashedSize / totalSize) * 100, 100);
+        const progressBar = document.getElementById("progress");
+        if (progressBar) progressBar.style.width = `${progressPercentage}%`;
     };
 
     for (let i = 0; i < fileTypes.length; i++) {
@@ -155,7 +174,9 @@ async function clickProgram() {
             let binFile = new File([await fetch(fileResource).then(r => r.blob())], fileType + ".bin");
             let contents = await readUploadedFileAsArrayBuffer(binFile);
             await espStub.flashData(contents, updateProgressBar, offset);
+            updateProgressBar(totalSize);
             annMsg(` ---> Finished flashing ${fileType}.`);
+            annMsg(` `);
             await sleep(100);
         } catch (e) {
             errorMsg(e);
@@ -165,36 +186,34 @@ async function clickProgram() {
     progressBarDialog.remove();
     butErase.disabled = false;
     butProgram.disabled = false;
+    flashMessages.style.display = "none";
     compMsg(" ---> FLASHING PROCESS COMPLETED!");
+    compMsg(" ");
     logMsg("Restart the board or disconnect to use the device.");
 }
 
 function createProgressBarDialog() {
-    const div = document.createElement("div");
-    div.id = "progressBarDialog";
-    div.style.position = "fixed";
-    div.style.left = "50%";
-    div.style.top = "50%";
-    div.style.transform = "translate(-50%, -50%)";
-    div.style.padding = "40px";
-    div.style.backgroundColor = "#333333";
-    div.style.border = "2px solid #6272a4";
-    div.style.borderRadius = "10px";
-    div.style.color = "white";
-    div.style.zIndex = "1000";
-    div.style.fontSize = "1.5em";
-    div.innerHTML = `
-        <div style="margin-bottom: 10px; color: #f8f8f2;">Flashing...</div>
+    const progressBarDialog = document.createElement("div");
+    progressBarDialog.id = "progressBarDialog";
+    progressBarDialog.style.position = "fixed";
+    progressBarDialog.style.left = "50%";
+    progressBarDialog.style.top = "50%";
+    progressBarDialog.style.transform = "translate(-50%, -50%)";
+    progressBarDialog.style.padding = "40px";
+    progressBarDialog.style.backgroundColor = "#333333";
+    progressBarDialog.style.border = "2px solid #6272a4";
+    progressBarDialog.style.borderRadius = "10px";
+    progressBarDialog.style.color = "white";
+    progressBarDialog.style.zIndex = "1000";
+    progressBarDialog.style.fontSize = "1.5em";
+    progressBarDialog.innerHTML = `
+        <div class="blinking-text" style="margin-bottom: 10px; color: #f8f8f2;">Flashing...</div>
         <div style="width: 100%; background-color: #44475a; border: 1px solid #e0e0e0; border-radius: 4px;">
             <div id="progress" style="width: 0%; height: 20px; background-color: #6272a4; border-radius: 4px; transition: width 0.5s ease;"></div>
         </div>
     `;
-    document.body.appendChild(div);
-    return div;
-}
-
-async function clickConnect() {
-    // ton code original de connexion (garde-le si tu l'as déjà)
+    document.body.appendChild(progressBarDialog);
+    return progressBarDialog;
 }
 
 async function clickClear() {
