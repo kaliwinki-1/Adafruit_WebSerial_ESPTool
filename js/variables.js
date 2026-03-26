@@ -1,7 +1,3 @@
-// ================================================
-// js/variables.js - CORRIGÉ POUR TES NOMS DE FICHIERS
-// ================================================
-
 const commonBootloader = 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin';
 const commonPartitions = 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin';
 
