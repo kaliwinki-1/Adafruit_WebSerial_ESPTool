@@ -1,4 +1,5 @@
-<script>
+import { MCYD2USBMarauderFiles, MCYD2USBHaleHoundFiles, MCYD2USBBruceFiles } from './variables.js';
+
 let espStub;
 const baudRates = 115200;
 const bufferSize = 512;
@@ -47,9 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const notSupported = document.getElementById("notSupported");
     if ("serial" in navigator) {
-        notSupported.classList.add("hidden");
+        if(notSupported) notSupported.classList.add("hidden");
     } else {
-        notSupported.classList.remove("hidden");
+        if(notSupported) notSupported.classList.remove("hidden");
     }
 
     modelSelect.addEventListener("change", checkDropdowns);
@@ -159,6 +160,7 @@ async function clickProgram() {
     };
 
     const selectedModel = modelSelect.value;
+    const selectedVersion = versionSelect.value;
 
     const modelFilesMap = {
         "CYD2USB_MARAUDER": MCYD2USBMarauderFiles,
@@ -166,7 +168,12 @@ async function clickProgram() {
         "CYD2USB_BRUCE": MCYD2USBBruceFiles
     };
 
-    const selectedFiles = modelFilesMap[selectedModel];
+    let selectedFiles;
+
+    if (selectedVersion === "latest") {
+        selectedFiles = modelFilesMap[selectedModel];
+    }
+
     if (!selectedFiles) {
         errorMsg(`No files found for model: ${selectedModel}`);
         return;
@@ -244,8 +251,12 @@ function createProgressBarDialog() {
     return progressBarDialog;
 }
 
-async function clickClear() {
+function clickClear() {
     log.innerHTML = "";
+}
+
+function clickAutoscroll() {
+    // Implement autoscroll toggle logic if needed
 }
 
 function checkDropdowns() {
@@ -271,4 +282,3 @@ function toggleUIToolbar(show) {
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
-</script>
