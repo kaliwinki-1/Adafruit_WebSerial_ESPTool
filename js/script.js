@@ -1,6 +1,7 @@
 <script>
 let espStub;
 const baudRates = 115200;
+const bufferSize = 512;
 const maxLogLength = 100;
 
 const log = document.getElementById("log");
@@ -34,7 +35,6 @@ document.addEventListener("DOMContentLoaded", () => {
             toggleUIConnected(false);
         });
     });
-
     butClear.addEventListener("click", clickClear);
     butErase.addEventListener("click", clickErase);
     butProgram.addEventListener("click", clickProgram);
@@ -114,4 +114,165 @@ async function clickConnect() {
             toggleUIConnected(false);
             espStub = undefined;
         });
-    } catch
+    } catch (err) {
+        console.error('Initialization error:', err);
+        await esploader.disconnect();
+        throw err;
+    }
+}
+
+async function clickErase() {
+    initMsg(` `);
+    initMsg(` !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! `);
+    initMsg(` !!! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CAUTION!!! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; !!! `);
+    initMsg(` !!! &nbsp;&nbsp;THIS WILL ERASE THE FIRMWARE ON&nbsp; !!! `);
+    initMsg(` !!! &nbsp;&nbsp;&nbsp;YOUR DEVICE! THIS CAN NOT BE &nbsp;&nbsp; !!! `);
+    initMsg(` !!! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; UNDONE! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; !!! `);
+    initMsg(` !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! `);
+    initMsg(` `);
+    if (window.confirm("This will erase the entire flash. Click OK to continue.")) {
+        butErase.disabled = true;
+        butProgram.disabled = true;
+        try {
+            logMsg("Erasing flash memory. Please wait...");
+            let stamp = Date.now();
+            await espStub.eraseFlash();
+            logMsg(`Finished. Took <font color="yellow">` + (Date.now() - stamp) + `ms</font> to erase.`);
+            compMsg(" ");
+            compMsg(" ---> ERASING PROCESS COMPLETED!");
+            compMsg(" ");
+        } catch (e) {
+            errorMsg(e);
+        } finally {
+            butProgram.disabled = false;
+        }
+    }
+}
+
+async function clickProgram() {
+    const readUploadedFileAsArrayBuffer = (inputFile) => {
+        const reader = new FileReader();
+        return new Promise((resolve, reject) => {
+            reader.onerror = () => { reader.abort(); reject(new DOMException("Problem parsing input file.")); };
+            reader.onload = () => resolve(reader.result);
+            reader.readAsArrayBuffer(inputFile);
+        });
+    };
+
+    const selectedModel = modelSelect.value;
+
+    const modelFilesMap = {
+        "CYD2USB_MARAUDER": MCYD2USBMarauderFiles,
+        "CYD2USB_HALEHOUND": MCYD2USBHaleHoundFiles,
+        "CYD2USB_BRUCE": MCYD2USBBruceFiles
+    };
+
+    const selectedFiles = modelFilesMap[selectedModel];
+    if (!selectedFiles) {
+        errorMsg(`No files found for model: ${selectedModel}`);
+        return;
+    }
+
+    const progressBarDialog = createProgressBarDialog();
+    const flashMessages = document.getElementById("flashMessages");
+
+    butErase.disabled = true;
+    butProgram.disabled = true;
+
+    initMsg(` `);
+    initMsg(` !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! `);
+    initMsg(` !!! FLASHING STARTED! DO NOT UNPLUG !!! `);
+    initMsg(` !!! UNTIL FLASHING IS COMPLETE!! !!! `);
+    initMsg(` !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! `);
+    initMsg(` `);
+
+    flashMessages.innerHTML = "";
+
+    const fileTypes = ['bootloader', 'partitions', 'firmware'];
+    const offsetsMap = {
+        "CYD2USB_MARAUDER": [0x1000, 0x8000, 0x10000],
+        "CYD2USB_HALEHOUND": [0x1000, 0x8000, 0x10000],
+        "CYD2USB_BRUCE": [0x1000, 0x8000, 0x10000]
+    };
+
+    const updateProgressBar = (cumulativeFlashedSize) => {
+        const progress = document.getElementById("progress");
+        if (progress) progress.style.width = "100%";
+    };
+
+    for (let i = 0; i < fileTypes.length; i++) {
+        const fileType = fileTypes[i];
+        const fileResource = selectedFiles[fileType];
+        const offset = offsetsMap[selectedModel][i];
+
+        try {
+            let binFile = new File([await fetch(fileResource).then(r => r.blob())], fileType + ".bin");
+            let contents = await readUploadedFileAsArrayBuffer(binFile);
+            await espStub.flashData(contents, updateProgressBar, offset);
+            annMsg(` ---> Finished flashing ${fileType}.`);
+            annMsg(` `);
+            await sleep(100);
+        } catch (e) {
+            errorMsg(e);
+        }
+    }
+
+    progressBarDialog.remove();
+    butErase.disabled = false;
+    butProgram.disabled = false;
+    compMsg(" ---> FLASHING PROCESS COMPLETED!");
+    logMsg("Restart the board or disconnect to use the device.");
+}
+
+function createProgressBarDialog() {
+    const progressBarDialog = document.createElement("div");
+    progressBarDialog.id = "progressBarDialog";
+    progressBarDialog.style.position = "fixed";
+    progressBarDialog.style.left = "50%";
+    progressBarDialog.style.top = "50%";
+    progressBarDialog.style.transform = "translate(-50%, -50%)";
+    progressBarDialog.style.padding = "40px";
+    progressBarDialog.style.backgroundColor = "#333333";
+    progressBarDialog.style.border = "2px solid #6272a4";
+    progressBarDialog.style.borderRadius = "10px";
+    progressBarDialog.style.color = "white";
+    progressBarDialog.style.zIndex = "1000";
+    progressBarDialog.style.fontSize = "1.5em";
+    progressBarDialog.innerHTML = `
+        <div style="margin-bottom: 10px;">Flashing...</div>
+        <div style="width: 100%; background-color: #44475a; border: 1px solid #e0e0e0; border-radius: 4px;">
+            <div id="progress" style="width: 0%; height: 20px; background-color: #6272a4; border-radius: 4px; transition: width 0.5s ease;"></div>
+        </div>
+    `;
+    document.body.appendChild(progressBarDialog);
+    return progressBarDialog;
+}
+
+async function clickClear() {
+    log.innerHTML = "";
+}
+
+function checkDropdowns() {
+    butProgram.disabled = false;
+}
+
+function toggleUIConnected(connected) {
+    let label = "Connect";
+    let iconClass = "fas fa-plug";
+    if (connected) {
+        label = "Disconnect";
+        iconClass = "far fa-window-close red-icon";
+    }
+    document.getElementById('butConnect').innerHTML = `<i class="${iconClass}"></i> ${label}`;
+}
+
+function toggleUIToolbar(show) {
+    if (show) appDiv.classList.add("connected");
+    else appDiv.classList.remove("connected");
+    butErase.disabled = !show;
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+</script>
