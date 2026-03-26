@@ -1,5 +1,5 @@
 // ================================================
-// js/variables.js - SEULEMENT TES 3 OPTIONS
+// js/variables.js - VERSION POUR TOI (3 options seulement)
 // ================================================
 
 const commonBootloader = 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin';
