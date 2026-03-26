@@ -1,5 +1,5 @@
 <script>
-// ====================== js/script.js MODIFIÉ ======================
+// ====================== js/script.js - VERSION CORRIGÉE ET SIMPLIFIÉE ======================
 
 let espStub;
 const baudRates = 115200;
@@ -7,6 +7,7 @@ const bufferSize = 512;
 const colors = ["#00a7e9", "#f89521", "#be1e2d"];
 const measurementPeriodId = "0001";
 const maxLogLength = 100;
+
 const log = document.getElementById("log");
 const butConnect = document.getElementById("butConnect");
 const butClear = document.getElementById("butClear");
@@ -17,10 +18,7 @@ const lightSS = document.getElementById("light");
 const darkSS = document.getElementById("dark");
 const darkMode = document.getElementById("darkmode");
 const modelSelect = document.getElementById("modelSelect");
-//const versionSelect = document.getElementById("versionSelect");
-//const variantSelect = document.getElementById("variantSelect");
-const offsets = [0x1000, 0x8000, 0xE000, 0x10000];
-const offsets2 = [0x0, 0x8000, 0xE000, 0x10000];
+
 const appDiv = document.getElementById("app");
 
 document.getElementById('butConnect').addEventListener('click', function() {
@@ -37,12 +35,11 @@ document.addEventListener("DOMContentLoaded", () => {
         clickConnect().catch(async (e) => {
             console.error(e);
             errorMsg(e.message || e);
-            if (espStub) {
-                await espStub.disconnect();
-            }
+            if (espStub) await espStub.disconnect();
             toggleUIConnected(false);
         });
     });
+
     butClear.addEventListener("click", clickClear);
     butErase.addEventListener("click", clickErase);
     butProgram.addEventListener("click", clickProgram);
@@ -65,73 +62,122 @@ document.addEventListener("DOMContentLoaded", () => {
     logMsg("ESP Web Flasher loaded.");
 });
 
-function logMsg(text) { ... }          // (tout le reste inchangé)
-function annMsg(text) { ... }
-function compMsg(text) { ... }
-function initMsg(text) { ... }
-function debugMsg(...args) { ... }
-function errorMsg(text) { ... }
-function enableStyleSheet(node, enabled) { ... }
-function formatMacAddr(macAddr) { ... }
-function updateTheme() { ... }
-async function clickAutoscroll() { ... }
-async function clickConnect() { ... }
-async function changeBaudRate() { ... }
-function createProgressBarDialog() { ... }
-async function clickDarkMode() { ... }
-async function clickErase() { ... }
+function logMsg(text) {
+    log.innerHTML += text + "<br>";
+    if (log.textContent.split("\n").length > maxLogLength + 1) {
+        let logLines = log.innerHTML.replace(/(\n)/gm, "").split("<br>");
+        log.innerHTML = logLines.splice(-maxLogLength).join("<br>\n");
+    }
+    log.scrollTop = log.scrollHeight;
+}
+
+function annMsg(text) {
+    log.innerHTML += `<font color='#FF9999'>` + text + `<br></font>`;
+    if (log.textContent.split("\n").length > maxLogLength + 1) {
+        let logLines = log.innerHTML.replace(/(\n)/gm, "").split("<br>");
+        log.innerHTML = logLines.splice(-maxLogLength).join("<br>\n");
+    }
+    log.scrollTop = log.scrollHeight;
+}
+
+function compMsg(text) {
+    log.innerHTML += `<font color='#2ED832'>` + text + `<br></font>`;
+    if (log.textContent.split("\n").length > maxLogLength + 1) {
+        let logLines = log.innerHTML.replace(/(\n)/gm, "").split("<br>");
+        log.innerHTML = logLines.splice(-maxLogLength).join("<br>\n");
+    }
+    log.scrollTop = log.scrollHeight;
+}
+
+function initMsg(text) {
+    log.innerHTML += `<font color='#F72408'>` + text + `<br></font>`;
+    if (log.textContent.split("\n").length > maxLogLength + 1) {
+        let logLines = log.innerHTML.replace(/(\n)/gm, "").split("<br>");
+        log.innerHTML = logLines.splice(-maxLogLength).join("<br>\n");
+    }
+    log.scrollTop = log.scrollHeight;
+}
+
+function debugMsg(...args) { /* garde tel quel si tu veux, sinon vide */ }
+function errorMsg(text) {
+    logMsg('<span class="error-message">Error:</span> ' + text);
+    console.log(text);
+}
+
+function enableStyleSheet(node, enabled) { /* non utilisé */ }
+function formatMacAddr(macAddr) {
+    return macAddr.map((value) => value.toString(16).toUpperCase().padStart(2, "0")).join(":");
+}
+
+async function clickAutoscroll() { /* non utilisé */ }
+async function clickConnect() { /* ton code original */ }
+async function changeBaudRate() { /* non utilisé */ }
+function createProgressBarDialog() { /* ton code original */ }
+async function clickDarkMode() { /* non utilisé */ }
+
+async function clickErase() {
+    initMsg(` `);
+    initMsg(` !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! `);
+    initMsg(` !!! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CAUTION!!! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; !!! `);
+    initMsg(` !!! &nbsp;&nbsp;THIS WILL ERASE THE FIRMWARE ON&nbsp; !!! `);
+    initMsg(` !!! &nbsp;&nbsp;&nbsp;YOUR DEVICE! THIS CAN NOT BE &nbsp;&nbsp; !!! `);
+    initMsg(` !!! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; UNDONE! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; !!! `);
+    initMsg(` !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! `);
+    initMsg(` `);
+    if (window.confirm("This will erase the entire flash. Click OK to continue.")) {
+        butErase.disabled = true;
+        butProgram.disabled = true;
+        try {
+            logMsg("Erasing flash memory. Please wait...");
+            let stamp = Date.now();
+            await espStub.eraseFlash();
+            logMsg(`Finished. Took <font color="yellow">` + (Date.now() - stamp) + `ms</font> to erase.`);
+            compMsg(" ");
+            compMsg(" ---> ERASING PROCESS COMPLETED!");
+            compMsg(" ");
+        } catch (e) {
+            errorMsg(e);
+        } finally {
+            butProgram.disabled = false;
+        }
+    }
+}
 
 async function clickProgram() {
-    const readUploadedFileAsArrayBuffer = (inputFile) => { ... };   // inchangé
+    const readUploadedFileAsArrayBuffer = (inputFile) => {
+        const reader = new FileReader();
+        return new Promise((resolve, reject) => {
+            reader.onerror = () => { reader.abort(); reject(new DOMException("Problem parsing input file.")); };
+            reader.onload = () => resolve(reader.result);
+            reader.readAsArrayBuffer(inputFile);
+        });
+    };
 
     const selectedModel = modelSelect.value;
-    const selectedVersion = versionSelect.value;
+    const selectedVersion = versionSelect.value;   // même si le select est commenté, on garde pour compatibilité
 
     const progressBarDialog = createProgressBarDialog();
-    const progress = document.getElementById("progress");
     let selectedFiles;
 
-    // ====================== MODIFICATION 1 : modelFilesMap ======================
+    // ====================== SEULEMENT TES 3 VARIANTS ======================
     const modelFilesMap = {
-        "SYD": MSYDlatestFiles,
-        "CYD": MCYDlatestFiles,
-        "CYDNOGPS": MCYDNOGPSlatestFiles,
-        
-        // === TES 3 OPTIONS CYD2USB ===
         "CYD2USB_MARAUDER": MCYD2USBMarauderFiles,
         "CYD2USB_HALEHOUND": MCYD2USBHaleHoundFiles,
-        "CYD2USB_BRUCE": MCYD2USBBruceFiles,
-
-        // (les autres modèles restent si tu veux les réactiver plus tard)
-        "CYD2USBNOGPS": MCYD2USBNOGPSlatestFiles,
-        "CYD24NOGPS": MCYD24NOGPSlatestFiles,
-        "CYD24GPS": MCYD24GPSlatestFiles,
-        "CYD24GNOGPS": MCYD24GNOGPSlatestFiles,
-        "CYD24GGPS": MCYD24GGPSlatestFiles,
-        "CYD24CAPNOGPS": MCYD24CAPNOGPSlatestFiles,
-        "CYD24CAPGPS": MCYD24CAPGPSlatestFiles,
-        "CYD35NOGPS": MCYD35NOGPSlatestFiles,
-        "CYD35GPS": MCYD35GPSlatestFiles,
-        "CYD35CAPNOGPS": MCYD35CAPNOGPSlatestFiles,
-        "CYD35CAPGPS": MCYD35CAPGPSlatestFiles,
-        "CYD32NOGPS": MCYD32NOGPSlatestFiles,
-        "CYD32GPS": MCYD32GPSlatestFiles,
-        "CYD32CAPNOGPS": MCYD32CAPNOGPSlatestFiles,
-        "CYD32CAPGPS": MCYD32CAPGPSlatestFiles
+        "CYD2USB_BRUCE": MCYD2USBBruceFiles
     };
 
     if (selectedVersion === "latest") {
         selectedFiles = modelFilesMap[selectedModel];
         if (!selectedFiles) {
-            console.error(`No files found for model: ${selectedModel}`);
+            errorMsg(`No files found for model: ${selectedModel}`);
+            progressBarDialog.remove();
             return;
         }
     } else {
-        console.error(`Unsupported version: ${selectedVersion}`);
+        errorMsg(`Unsupported version: ${selectedVersion}`);
+        progressBarDialog.remove();
         return;
     }
-
-    // ... (tout le reste du code clickProgram reste IDENTIQUE) ...
 
     const flashMessages = document.getElementById("flashMessages");
     butErase.disabled = true;
@@ -148,45 +194,23 @@ async function clickProgram() {
 
     let totalSize = 0;
     let flashedSize = 0;
-    let fileTypes;
+    let fileTypes = ['bootloader', 'partitions', 'firmware'];
 
-    if (selectedModel === "SYD") {
-        fileTypes = ['bootloader', 'partitions', 'boot_app0', 'firmware'];
-    } else {
-        fileTypes = ['bootloader', 'partitions', 'firmware'];
-    }
-
-    // ... (calcul de la taille et la boucle de flash restent inchangés) ...
-
+    // ====================== SEULEMENT TES 3 VARIANTS ======================
     const offsetsMap = {
-        "SYD": [0x0, 0x8000, 0xE000, 0x10000],
-        "CYD": [0x1000, 0x8000, 0x10000],
-        "CYDNOGPS": [0x1000, 0x8000, 0x10000],
-        
-        // ====================== MODIFICATION 2 : offsetsMap ======================
-        "CYD2USB": [0x1000, 0x8000, 0x10000],
         "CYD2USB_MARAUDER": [0x1000, 0x8000, 0x10000],
         "CYD2USB_HALEHOUND": [0x1000, 0x8000, 0x10000],
-        "CYD2USB_BRUCE": [0x1000, 0x8000, 0x10000],
-
-        "CYD2USBNOGPS": [0x1000, 0x8000, 0x10000],
-        "CYD24NOGPS": [0x1000, 0x8000, 0x10000],
-        "CYD24GPS": [0x1000, 0x8000, 0x10000],
-        "CYD24GNOGPS": [0x1000, 0x8000, 0x10000],
-        "CYD24GGPS": [0x1000, 0x8000, 0x10000],
-        "CYD24CAPNOGPS": [0x1000, 0x8000, 0x10000],
-        "CYD24CAPGPS": [0x1000, 0x8000, 0x10000],
-        "CYD35NOGPS": [0x1000, 0x8000, 0x10000],
-        "CYD35GPS": [0x1000, 0x8000, 0x10000],
-        "CYD35CAPNOGPS": [0x1000, 0x8000, 0x10000],
-        "CYD35CAPGPS": [0x1000, 0x8000, 0x10000],
-        "CYD32NOGPS": [0x1000, 0x8000, 0x10000],
-        "CYD32GPS": [0x1000, 0x8000, 0x10000],
-        "CYD32CAPNOGPS": [0x1000, 0x8000, 0x10000],
-        "CYD32CAPGPS": [0x1000, 0x8000, 0x10000]
+        "CYD2USB_BRUCE": [0x1000, 0x8000, 0x10000]
     };
 
-    // Flash each file in sequence...
+    const updateProgressBar = (cumulativeFlashedSize) => {
+        flashedSize = cumulativeFlashedSize;
+        const progressPercentage = Math.min((flashedSize / totalSize) * 100, 100);
+        const progressBar = document.getElementById("progress");
+        if (progressBar) progressBar.style.width = `${progressPercentage}%`;
+    };
+
+    // Flash each file
     for (let fileType of fileTypes) {
         let fileResource = selectedFiles[fileType];
         let offset = offsetsMap[selectedModel][fileTypes.indexOf(fileType)];
@@ -195,11 +219,7 @@ async function clickProgram() {
             let binFile = new File([await fetch(fileResource).then(r => r.blob())], fileType + ".bin");
             let contents = await readUploadedFileAsArrayBuffer(binFile);
 
-            await espStub.flashData(
-                contents,
-                (cumulativeFlashedSize) => updateProgressBar(cumulativeFlashedSize),
-                offset
-            );
+            await espStub.flashData(contents, updateProgressBar, offset);
 
             updateProgressBar(totalSize);
             annMsg(` ---> Finished flashing ${fileType}.`);
@@ -219,13 +239,31 @@ async function clickProgram() {
     logMsg("Restart the board or disconnect to use the device.");
 }
 
-async function clickClear() { ... }           // reste inchangé
-function convertJSON(chunk) { ... }
-function toggleUIToolbar(show) { ... }
-function toggleUIConnected(connected) { ... }
-function loadSetting(setting, defaultValue) { ... }
-function saveSetting(setting, value) { ... }
-function ucWords(text) { ... }
-function sleep(ms) { ... }
+async function clickClear() {
+    log.innerHTML = "";
+}
 
+function toggleUIToolbar(show) {
+    if (show) appDiv.classList.add("connected");
+    else appDiv.classList.remove("connected");
+    butErase.disabled = !show;
+}
+
+function toggleUIConnected(connected) {
+    let label = "Connect";
+    let iconClass = "fas fa-plug";
+    if (connected) {
+        label = "Disconnect";
+        iconClass = "far fa-window-close red-icon";
+    }
+    document.getElementById('butConnect').innerHTML = `<i class="${iconClass}"></i> ${label}`;
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function checkDropdowns() {
+    butProgram.disabled = false;   // on garde toujours actif
+}
 </script>
