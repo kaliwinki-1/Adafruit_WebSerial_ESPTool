@@ -68,27 +68,30 @@
                 <div class="upload">
                     <label class="firmware">
                         <div class="model-select">
+                            <!-- MENU DÉROULANT CORRIGÉ -->
                             <select id="modelSelect" class="dropdown" style="background-color: #333; color: white;">
-                                <option value="NULL" disabled selected style="display:none;"><b>--- SELECT BOARD ---</b></option>
+                                <option value="NULL" disabled selected><b>--- SELECT BOARD ---</b></option>
                                 <optgroup label="+CYD2USB ESP32-2432S028R 2.8&quot; CYD ">
                                     <option value="CYD2USB_MARAUDER">- Marauder CYD2USB</option>
                                     <option value="CYD2USB_HALEHOUND">- HaleHound CYD2USB</option>
                                     <option value="CYD2USB_BRUCE">- Bruce CYD2USB</option>
                                 </optgroup>
                             </select>
+
                             <select id="versionSelect" class="dropdown" style="background-color: #333; color: white;">
-                                <option value="NULL" disabled selected style="display:none;"><b>--- VERSION ---</b></option>
                                 <option value="latest">Current 1.11.0</option>
                             </select>
                         </div>
                     </label>
                     <br><br>
                 </div>
+
                 <div class="buttons">
                     &nbsp;&nbsp;&nbsp;<a id="butProgram"><i class="fas fa-upload"></i> Program</a>&nbsp;&nbsp;
-                    <a id="butErase"><i class="fas fa-trash"></i> Erase</a>
+                    <a id="butErase"><i class="fas fa-trash"></i> Erase</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 </div>
             </div>
+
             <div id="flashMessages" class="flashMessages"></div>
             <div id="log"></div>
         </div>
