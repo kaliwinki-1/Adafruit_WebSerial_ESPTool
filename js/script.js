@@ -2,8 +2,6 @@
 let espStub;
 const baudRates = 115200;
 const bufferSize = 512;
-const colors = ["#00a7e9", "#f89521", "#be1e2d"];
-const measurementPeriodId = "0001";
 const maxLogLength = 100;
 
 const log = document.getElementById("log");
@@ -12,14 +10,9 @@ const butClear = document.getElementById("butClear");
 const butErase = document.getElementById("butErase");
 const butProgram = document.getElementById("butProgram");
 const autoscroll = document.getElementById("autoscroll");
-const lightSS = document.getElementById("light");
-const darkSS = document.getElementById("dark");
-const darkMode = document.getElementById("darkmode");
 const modelSelect = document.getElementById("modelSelect");
 const versionSelect = document.getElementById("versionSelect");
 
-const offsets = [0x1000, 0x8000, 0xE000, 0x10000];
-const offsets2 = [0x0, 0x8000, 0xE000, 0x10000];
 const appDiv = document.getElementById("app");
 
 document.getElementById('butConnect').addEventListener('click', function() {
@@ -46,11 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
     autoscroll.addEventListener("click", clickAutoscroll);
 
     const notSupported = document.getElementById("notSupported");
-    if ("serial" in navigator) {
-        notSupported.classList.add("hidden");
-    } else {
-        notSupported.classList.remove("hidden");
-    }
+    if ("serial" in navigator) notSupported.classList.add("hidden");
+    else notSupported.classList.remove("hidden");
 
     modelSelect.addEventListener("change", checkDropdowns);
     checkDropdowns();
@@ -221,45 +211,22 @@ async function clickProgram() {
 }
 
 function createProgressBarDialog() {
-    const progressBarDialog = document.createElement("div");
-    progressBarDialog.id = "progressBarDialog";
-    progressBarDialog.style.position = "fixed";
-    progressBarDialog.style.left = "50%";
-    progressBarDialog.style.top = "50%";
-    progressBarDialog.style.transform = "translate(-50%, -50%)";
-    progressBarDialog.style.padding = "40px";
-    progressBarDialog.style.backgroundColor = "#333333";
-    progressBarDialog.style.border = "2px solid #6272a4";
-    progressBarDialog.style.borderRadius = "10px";
-    progressBarDialog.style.color = "white";
-    progressBarDialog.style.zIndex = "1000";
-    progressBarDialog.style.fontSize = "1.5em";
-    progressBarDialog.innerHTML = `
-        <div style="margin-bottom: 10px;">Flashing...</div>
-        <div style="width: 100%; background-color: #44475a; border: 1px solid #e0e0e0; border-radius: 4px;">
-            <div id="progress" style="width: 0%; height: 20px; background-color: #6272a4; border-radius: 4px; transition: width 0.5s ease;"></div>
-        </div>
-    `;
-    document.body.appendChild(progressBarDialog);
-    return progressBarDialog;
+    const d = document.createElement("div");
+    d.id = "progressBarDialog";
+    d.style.cssText = "position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);padding:40px;background:#333;border:2px solid #6272a4;border-radius:10px;color:white;z-index:1000;font-size:1.5em";
+    d.innerHTML = `<div style="margin-bottom:10px">Flashing...</div><div style="width:300px;background:#444;border:1px solid #e0e0e0;border-radius:4px"><div id="progress" style="width:0;height:20px;background:#6272a4;border-radius:4px;transition:width 0.5s"></div></div>`;
+    document.body.appendChild(d);
+    return d;
 }
 
-async function clickClear() {
-    log.innerHTML = "";
-}
+async function clickClear() { log.innerHTML = ""; }
 
-function checkDropdowns() {
-    butProgram.disabled = false;
-}
+function checkDropdowns() { butProgram.disabled = false; }
 
 function toggleUIConnected(connected) {
-    let label = "Connect";
-    let iconClass = "fas fa-plug";
-    if (connected) {
-        label = "Disconnect";
-        iconClass = "far fa-window-close red-icon";
-    }
-    document.getElementById('butConnect').innerHTML = `<i class="${iconClass}"></i> ${label}`;
+    let label = "Connect", icon = "fas fa-plug";
+    if (connected) { label = "Disconnect"; icon = "far fa-window-close red-icon"; }
+    document.getElementById('butConnect').innerHTML = `<i class="${icon}"></i> ${label}`;
 }
 
 function toggleUIToolbar(show) {
@@ -268,7 +235,5 @@ function toggleUIToolbar(show) {
     butErase.disabled = !show;
 }
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 </script>
