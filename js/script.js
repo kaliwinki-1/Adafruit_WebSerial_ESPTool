@@ -2,11 +2,13 @@ let espStub;
 const baudRates = 115200;
 const log = document.getElementById("log");
 const butConnect = document.getElementById("butConnect");
+const butDisconnect = document.getElementById("butDisconnect");
 const butProgram = document.getElementById("butProgram");
 const butErase = document.getElementById("butErase");
 const modelSelect = document.getElementById("modelSelect");
+const versionSelect = document.getElementById("versionSelect");
+const appDiv = document.getElementById("app");
 
-// Utility: Sleep function
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 function logMsg(text) {
@@ -14,7 +16,18 @@ function logMsg(text) {
     log.scrollTop = log.scrollHeight;
 }
 
+function formatMacAddr(macAddr) {
+    return macAddr.map((value) => value.toString(16).toUpperCase().padStart(2, "0")).join(":");
+}
+
 async function clickConnect() {
+    if (espStub) {
+        await espStub.disconnect();
+        toggleUIConnected(false);
+        espStub = undefined;
+        return;
+    }
+
     const esploaderMod = await window.esptoolPackage;
     const esploader = await esploaderMod.connect({
         log: logMsg,
@@ -24,17 +37,17 @@ async function clickConnect() {
 
     try {
         await esploader.initialize();
-        logMsg("Connecté à : " + esploader.chipName);
+        logMsg(`Connecté à ${esploader.chipName} | MAC: ${formatMacAddr(esploader.macAddr())}`);
         espStub = await esploader.runStub();
+        toggleUIConnected(true);
     } catch (err) {
         logMsg("Échec de connexion : " + err);
+        await esploader.disconnect();
     }
 }
 
 async function clickProgram() {
     const selectedModel = modelSelect.value;
-    
-    // Mappage des variables globales de variables.js
     const modelMap = {
         "CYD2USB_MARAUDER": MCYD2USBMarauderFiles,
         "CYD2USB_HALEHOUND": MCYD2USBHaleHoundFiles,
@@ -42,13 +55,16 @@ async function clickProgram() {
     };
 
     const files = modelMap[selectedModel];
-    if (!files) {
-        logMsg("Veuillez sélectionner un modèle valide.");
+    if (!files || selectedModel === "NULL") {
+        alert("Veuillez d'abord sélectionner un modèle dans la liste.");
         return;
     }
 
-    logMsg("Début du flashage...");
+    butProgram.disabled = true;
+    butErase.disabled = true;
+    logMsg("<br><b>--- LANCEMENT DU FLASHAGE ---</b>");
 
+    // Offsets standards pour ESP32
     const fileTypes = ['bootloader', 'partitions', 'firmware'];
     const offsets = [0x1000, 0x8000, 0x10000];
 
@@ -58,32 +74,61 @@ async function clickProgram() {
         const offset = offsets[i];
 
         try {
-            logMsg(`Téléchargement de ${type}...`);
+            logMsg(`Chargement de ${type} (${url})...`);
             const response = await fetch(url);
-            const blob = await response.blob();
-            const buffer = await blob.arrayBuffer();
             
-            logMsg(`Flashage de ${type} à l'adresse ${offset.toString(16)}...`);
-            await espStub.flashData(buffer, (progress) => {}, offset);
-            logMsg(`Succès pour ${type}`);
-            await sleep(200);
+            if (!response.ok) {
+                throw new Error(`Fichier introuvable sur le serveur (Erreur ${response.status})`);
+            }
+
+            const buffer = await response.arrayBuffer();
+            
+            logMsg(`Écriture à l'adresse 0x${offset.toString(16)}...`);
+            await espStub.flashData(buffer, (progress) => {
+                // Barre de progression simplifiée dans le log
+            }, offset);
+            
+            logMsg(`<font color="#2ED832">Succès pour ${type}</font>`);
+            await sleep(100);
         } catch (e) {
-            logMsg(`Erreur sur ${type} : ` + e);
+            logMsg(`<font color="red">ERREUR CRITIQUE : ${e.message}</font>`);
+            logMsg("Vérifiez que le nom du fichier sur GitHub correspond exactement à variables.js");
+            break;
         }
     }
-    logMsg("FLASHAGE TERMINÉ ! Redémarrez votre CYD.");
+
+    logMsg("<b>--- OPÉRATION TERMINÉE ---</b>");
+    butProgram.disabled = false;
+    butErase.disabled = false;
 }
 
 async function clickErase() {
-    if (confirm("Voulez-vous vraiment effacer TOUTE la mémoire flash ?")) {
-        logMsg("Effacement en cours...");
-        await espStub.eraseFlash();
-        logMsg("Effacement terminé.");
+    if (confirm("Voulez-vous vraiment effacer TOUTE la mémoire de l'ESP32 ?")) {
+        try {
+            logMsg("Effacement en cours, veuillez patienter...");
+            await espStub.eraseFlash();
+            logMsg("<font color="#2ED832">Mémoire flash effacée avec succès.</font>");
+        } catch (e) {
+            logMsg("Erreur lors de l'effacement : " + e);
+        }
     }
 }
 
-// Event Listeners
+function toggleUIConnected(connected) {
+    if (connected) {
+        butConnect.style.display = "none";
+        butDisconnect.style.display = "inline-block";
+        appDiv.classList.add("connected");
+    } else {
+        butConnect.style.display = "inline-block";
+        butDisconnect.style.display = "none";
+        appDiv.classList.remove("connected");
+    }
+}
+
+// Listeners
 butConnect.addEventListener("click", clickConnect);
+butDisconnect.addEventListener("click", clickConnect);
 butProgram.addEventListener("click", clickProgram);
 butErase.addEventListener("click", clickErase);
 document.getElementById("butClear").addEventListener("click", () => log.innerHTML = "");
