@@ -1,6 +1,6 @@
-## [CYM Web Flasher](https://fr4nkfletcher.github.io/Adafruit_WebSerial_ESPTool/)
+## [CYM Web Flasher](https://kaliwinki-1.github.io/MARAUDER_v1_11_0_CYD2USB_FLASHER/)
 
-A fork of Adafruit’s WebSerial tool for flashing ESP32Marauder onto the Cheap Yellow Display and similar devices.
+_______________     A fork for CYD2USB ONLY ______
 
 ---
 
