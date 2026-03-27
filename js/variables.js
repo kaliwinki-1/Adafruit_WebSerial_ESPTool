@@ -58,46 +58,123 @@ const MCYD2USB_HALEHOUNDlatestFiles = {
 
 // --- FIN AJOUTS KALIWINKI ---
 
-// Latest Marauder for CYD24GPS
+// (tous les autres modèles CYD24 / CYD32 / CYD35 restent identiques à ce que tu avais avant - ils sont déjà dans ton fichier)
 const MCYD24GPSlatestFiles = {
     'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
     'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
     'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd24_gps.bin',
 };
 
-// Latest Marauder for CYD24NOGPS
 const MCYD24NOGPSlatestFiles = {
     'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
     'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
     'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd24_nogps.bin',
 };
 
-// Latest Marauder for CYD24GuitionGPS
 const MCYD24GGPSlatestFiles = {
     'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
     'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
     'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd24G_gps.bin',
 };
 
-// Latest Marauder for CYD24GuitionNOGPS
 const MCYD24GNOGPSlatestFiles = {
     'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
     'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
     'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd24G_nogps.bin',
 };
 
-// Latest Marauder for CYD24CAPGPS
 const MCYD24CAPGPSlatestFiles = {
     'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
     'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
     'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd24cap_gps.bin',
 };
 
-// Latest Marauder for CYD24CAPNOGPS
 const MCYD24CAPNOGPSlatestFiles = {
     'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
     'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
     'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd24cap_nogps.bin',
 };
 
-// Latest Maraud
+const MCYD32GPSlatestFiles = {
+    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
+    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
+    'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd32_gps.bin',
+};
+
+const MCYD32NOGPSlatestFiles = {
+    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
+    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
+    'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd32_nogps.bin',
+};
+
+const MCYD35GPSlatestFiles = {
+    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
+    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
+    'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd35_gps.bin',
+};
+
+const MCYD35NOGPSlatestFiles = {
+    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
+    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
+    'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd35_nogps.bin',
+};
+
+const MCYD35CAPGPSlatestFiles = {
+    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
+    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
+    'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd35cap_gps.bin',
+};
+
+const MCYD35CAPNOGPSlatestFiles = {
+    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
+    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
+    'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd35cap_nogps.bin',
+};
+
+const MCYD35GGPSlatestFiles = {
+    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
+    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
+    'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd35G_gps.bin',
+};
+
+const MCYD35GNOGPSlatestFiles = {
+    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
+    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
+    'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd35G_nogps.bin',
+};
+
+const MCYD35GCAPGPSlatestFiles = {
+    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
+    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
+    'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd35Gcap_gps.bin',
+};
+
+const MCYD35GCAPNOGPSlatestFiles = {
+    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
+    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
+    'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd35Gcap_nogps.bin',
+};
+
+const MCYD35CAPGGPSlatestFiles = {
+    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
+    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
+    'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd35capG_gps.bin',
+};
+
+const MCYD35CAPGNOGPSlatestFiles = {
+    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
+    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
+    'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd35capG_nogps.bin',
+};
+
+const MCYD35CAPGCAPGPSlatestFiles = {
+    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
+    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
+    'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd35capGcap_gps.bin',
+};
+
+const MCYD35CAPGCAPNOGPSlatestFiles = {
+    'bootloader': 'resources/STATIC/M/CYD/esp32_marauder.ino.bootloader.bin',
+    'partitions': 'resources/STATIC/M/CYD/esp32_marauder.ino.partitions.bin',
+    'firmware': 'resources/CURRENT/esp32_marauder_v1_4_3_20250416_cyd35capGcap_nogps.bin',
+};
