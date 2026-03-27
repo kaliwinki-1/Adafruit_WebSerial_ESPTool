@@ -10,8 +10,6 @@ async function clickProgram() {
 
     const selectedModel = modelSelect.value;
     const selectedVersion = versionSelect.value;
-    const progressBarDialog = createProgressBarDialog();
-    const progress = document.getElementById("progress"); 
 
     let selectedFiles;
     const modelFilesMap = {
@@ -53,22 +51,9 @@ async function clickProgram() {
     initMsg(` !!!    UNTIL FLASHING IS COMPLETE!!     !!! `);
     initMsg(` !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! `);
 
-    let totalSize = 0;
-    
-    // 4 fichiers pour SYD et HALEHOUND
     let fileTypes = (selectedModel === "SYD" || selectedModel === "CYD2USB_HALEHOUND") 
                     ? ['bootloader', 'partitions', 'boot_app0', 'firmware'] 
                     : ['bootloader', 'partitions', 'firmware'];
-
-    for (let fileType of fileTypes) {
-        let response = await fetch(selectedFiles[fileType], { method: 'HEAD' });
-        totalSize += parseInt(response.headers.get('content-length') || 0, 10);
-    }
-
-    const updateProgressBar = (cumulativeFlashedSize) => {
-        const progressPercentage = Math.min((cumulativeFlashedSize / totalSize) * 100, 100);
-        if (progress) progress.style.width = `${progressPercentage}%`;
-    };
 
     const cydOffsets = [0x1000, 0x8000, 0x10000];
     const offsetsMap = {
@@ -96,7 +81,6 @@ async function clickProgram() {
         "CYD32CAPNOGPS": cydOffsets
     };
 
-    let cumulativeFlashed = 0;
     for (let i = 0; i < fileTypes.length; i++) {
         let fileType = fileTypes[i];
         let offset = offsetsMap[selectedModel][i];
@@ -108,11 +92,8 @@ async function clickProgram() {
             let binBlob = await response.blob();
             let contents = await readUploadedFileAsArrayBuffer(new File([binBlob], "file.bin"));
 
-            await espStub.flashData(contents, (fileProgress) => {
-                updateProgressBar(cumulativeFlashed + fileProgress);
-            }, offset);
+            await espStub.flashData(contents, () => {}, offset);
 
-            cumulativeFlashed += contents.byteLength;
             annMsg(` ---> Finished flashing ${fileType}.`);
         } catch (e) {
             initMsg(` Error flashing ${fileType}: ${e.message}`);
@@ -120,7 +101,6 @@ async function clickProgram() {
         }
     }
 
-    progressBarDialog.remove();
     butErase.disabled = false;
     butProgram.disabled = false;
     compMsg(" ---> FLASHING PROCESS COMPLETED!");
