@@ -55,7 +55,7 @@ async function clickProgram() {
 
     let totalSize = 0;
     
-    // Définition des types de fichiers (4 fichiers pour SYD et HALEHOUND)
+    // 4 fichiers pour SYD et HALEHOUND
     let fileTypes = (selectedModel === "SYD" || selectedModel === "CYD2USB_HALEHOUND") 
                     ? ['bootloader', 'partitions', 'boot_app0', 'firmware'] 
                     : ['bootloader', 'partitions', 'firmware'];
