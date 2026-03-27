@@ -17,8 +17,7 @@ const lightSS = document.getElementById("light");
 const darkSS = document.getElementById("dark");
 const darkMode = document.getElementById("darkmode");
 const modelSelect = document.getElementById("modelSelect");
-//const versionSelect = document.getElementById("versionSelect");
-//const variantSelect = document.getElementById("variantSelect");
+const versionSelect = document.getElementById("versionSelect");
 const offsets = [0x1000, 0x8000, 0xE000, 0x10000];
 const offsets2 = [0x0, 0x8000, 0xE000, 0x10000];
 
@@ -32,8 +31,6 @@ document.getElementById('butConnect').addEventListener('click', function() {
         icon.classList.add('green-icon');
     }
 });
-
-
 
 document.addEventListener("DOMContentLoaded", () => {
     butConnect.addEventListener("click", () => {
@@ -49,42 +46,24 @@ document.addEventListener("DOMContentLoaded", () => {
     butClear.addEventListener("click", clickClear);
     butErase.addEventListener("click", clickErase);
     butProgram.addEventListener("click", clickProgram);
-    butClear.addEventListener("click", clickClear);
     autoscroll.addEventListener("click", clickAutoscroll);
-    //darkMode.addEventListener("click", clickDarkMode);
+    
     window.addEventListener("error", function (event) {
         console.log("Got an uncaught error: ", event.error);
     });
 
     const notSupported = document.getElementById("notSupported");
     if ("serial" in navigator) {
-        notSupported.classList.add("hidden"); 
+        if(notSupported) notSupported.classList.add("hidden"); 
     } else {
-        notSupported.classList.remove("hidden");
+        if(notSupported) notSupported.classList.remove("hidden");
     }
-
-    modelSelect.addEventListener("change", () => {
-        const selectedModel = modelSelect.value;
-        // Handle model change if needed
-    });
-
 
     modelSelect.addEventListener("change", checkDropdowns);
   
     function checkDropdowns() {
-        const isAnyDropdownNull = [modelSelect.value, versionSelect.value, variantSelect.value].includes("NULL");
-        const isBoardNotS2 = (modelSelect.value !== "S2" && modelSelect.value !== "S2SD");
-        const isBlackMagicSelected = variantSelect.value === "BlackMagic";
-
-        if (isAnyDropdownNull || (isBoardNotS2 && isBlackMagicSelected)) {
-            butProgram.disabled = false;
-        } else {
-            butProgram.disabled = false;
-        }
+        butProgram.disabled = false;
     }
-
-    modelSelect.addEventListener('change', checkDropdowns);
-
 
     checkDropdowns();
     logMsg("ESP Web Flasher loaded.");
@@ -92,100 +71,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function logMsg(text) {
     log.innerHTML += text + "<br>";
-
     if (log.textContent.split("\n").length > maxLogLength + 1) {
         let logLines = log.innerHTML.replace(/(\n)/gm, "").split("<br>");
         log.innerHTML = logLines.splice(-maxLogLength).join("<br>\n");
     }
-
-    
     log.scrollTop = log.scrollHeight;
-    
 }
-
 
 function annMsg(text) {
     log.innerHTML += `<font color='#FF9999'>` + text + `<br></font>`;
-
-    if (log.textContent.split("\n").length > maxLogLength + 1) {
-        let logLines = log.innerHTML.replace(/(\n)/gm, "").split("<br>");
-        log.innerHTML = logLines.splice(-maxLogLength).join("<br>\n");
-    }
-
     log.scrollTop = log.scrollHeight;
-    
 }
+
 function compMsg(text) {
     log.innerHTML += `<font color='#2ED832'>` + text + `<br></font>`;
-
-    if (log.textContent.split("\n").length > maxLogLength + 1) {
-        let logLines = log.innerHTML.replace(/(\n)/gm, "").split("<br>");
-        log.innerHTML = logLines.splice(-maxLogLength).join("<br>\n");
-    }
-
     log.scrollTop = log.scrollHeight;
-    
 }
+
 function initMsg(text) {
     log.innerHTML += `<font color='#F72408'>` + text + `<br></font>`;
-
-    if (log.textContent.split("\n").length > maxLogLength + 1) {
-        let logLines = log.innerHTML.replace(/(\n)/gm, "").split("<br>");
-        log.innerHTML = logLines.splice(-maxLogLength).join("<br>\n");
-    }
-
-        log.scrollTop = log.scrollHeight;
-
-}
-
-function debugMsg(...args) {
-    function getStackTrace() {
-        let stack = new Error().stack;
-        stack = stack.split("\n").map((v) => v.trim());
-        stack.shift();
-        stack.shift();
-
-        let trace = [];
-        for (let line of stack) {
-            line = line.replace("at ", "");
-            trace.push({
-                func: line.substr(0, line.indexOf("(") - 1),
-                pos: line.substring(line.indexOf(".js:") + 4, line.lastIndexOf(":")),
-            });
-        }
-
-        return trace;
-    }
-
-    let stack = getStackTrace();
-    stack.shift();
-    let top = stack.shift();
-    let prefix =
-        '<span class="debug-function">[' + top.func + ":" + top.pos + "]</span> ";
-    for (let arg of args) {
-        if (typeof arg == "string") {
-            logMsg(prefix + arg);
-        } else if (typeof arg == "number") {
-            logMsg(prefix + arg);
-        } else if (typeof arg == "boolean") {
-            logMsg(prefix + (arg ? "true" : "false"));
-        } else if (Array.isArray(arg)) {
-            logMsg(prefix + "[" + arg.map((value) => toHex(value)).join(", ") + "]");
-        } else if (typeof arg == "object" && arg instanceof Uint8Array) {
-            logMsg(
-                prefix +
-                "[" +
-                Array.from(arg)
-                    .map((value) => toHex(value))
-                    .join(", ") +
-                "]"
-            );
-        } else {
-            logMsg(prefix + "Unhandled type of argument:" + typeof arg);
-            console.log(arg);
-        }
-        prefix = "";
-    }
+    log.scrollTop = log.scrollHeight;
 }
 
 function errorMsg(text) {
@@ -193,29 +98,10 @@ function errorMsg(text) {
     console.log(text);
 }
 
-function enableStyleSheet(node, enabled) {
-    node.disabled = !enabled;
-}
-
 function formatMacAddr(macAddr) {
     return macAddr
         .map((value) => value.toString(16).toUpperCase().padStart(2, "0"))
         .join(":");
-}
-
-function updateTheme() {
-  // Disable all themes
-  document
-    .querySelectorAll("link[rel=stylesheet].alternate")
-    .forEach((styleSheet) => {
-      enableStyleSheet(styleSheet, false);
-    });
-
-  if (darkMode.checked) {
-    enableStyleSheet(darkSS, true);
-  } else {
-    enableStyleSheet(lightSS, true);
-  }
 }
 
 async function clickAutoscroll() {
@@ -229,14 +115,6 @@ async function clickConnect() {
         toggleUIConnected(false);
         espStub = undefined;
         return;
-    }
-
-    try {
-        // Connection logic
-        checkDropdowns();
-    } catch (err) {
-        console.error('Error during connection setup:', err);
-        butProgram.disabled = false; // Ensure button is disabled on error
     }
 
     const esploaderMod = await window.esptoolPackage;
@@ -260,35 +138,17 @@ async function clickConnect() {
             espStub = undefined;
         });
     } catch (err) {
-        console.error('Initialization error:', err);
         await esploader.disconnect();
-        throw err; // Re-throw the error to handle it elsewhere if needed
+        throw err;
     }
 }
-
-
-
-async function changeBaudRate() {
-    saveSetting("baudrate", baudRate.value);
-    if (espStub) {
-        let baud = parseInt(baudRate.value);
-        if (baudRates.includes(baud)) {
-            await espStub.setBaudrate(baud);
-        }
-    }
-}
-
 
 function createProgressBarDialog() {
     const styleSheet = document.createElement("style");
     styleSheet.type = "text/css";
     styleSheet.innerText = `
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
-        .blinking-text {
-            animation: blink 1s linear infinite;
-        }
+        @keyframes blink { 50% { opacity: 0; } }
+        .blinking-text { animation: blink 1s linear infinite; }
     `;
     document.head.appendChild(styleSheet);
 
@@ -305,45 +165,27 @@ function createProgressBarDialog() {
     progressBarDialog.style.color = "white";
     progressBarDialog.style.zIndex = "1000";
     progressBarDialog.style.fontSize = "1.5em"; 
-    progressBarDialog.style.maxWidth = "350px"; // Set a maximum width for the dialog
     progressBarDialog.style.width = "50%";
-    progressBarDialog.style.boxSizing = "border-box"; // Include padding in width calculation
-    progressBarDialog.style.overflow = "hidden"; // Prevent content from spilling out
+    progressBarDialog.style.boxSizing = "border-box";
     progressBarDialog.innerHTML = `
-        <div class="blinking-text" style="margin-bottom: 10px; color: #f8f8f2; animation: blink-animation 1.5s steps(2, start) infinite;">Flashing...</div>
-<style>
-  @keyframes blink-animation {
-    to {
-        visibility: hidden;
-    }
-}
-</style>
-<div id="progressBar" style="width: 100%; background-color: #44475a; border: 1px solid #e0e0e0; border-radius: 4px;">
-    <div id="progress" style="width: 0%; height: 20px; background-color: #6272a4; border-radius: 4px; transition: width 0.5s ease;"></div>
-</div>
-<div style="margin-top: 10px; color: #FF9999; font-style: italic; font-size: 16px;">Flashing process will take at least 2 minutes.</div>
+        <div class="blinking-text" style="margin-bottom: 10px; color: #f8f8f2;">Flashing...</div>
+        <div id="progressBar" style="width: 100%; background-color: #44475a; border: 1px solid #e0e0e0; border-radius: 4px;">
+            <div id="progress" style="width: 0%; height: 20px; background-color: #6272a4; border-radius: 4px; transition: width 0.5s ease;"></div>
+        </div>
+        <div style="margin-top: 10px; color: #FF9999; font-style: italic; font-size: 16px;">Flashing process will take at least 2 minutes.</div>
     `;
-
     document.body.appendChild(progressBarDialog);
     return progressBarDialog;
 }
 
-
-async function clickDarkMode() {
-  updateTheme();
-  saveSetting("darkmode", darkMode.checked);
-}
-
-
 async function clickErase() {
     initMsg(` `);
     initMsg(` !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! `);
-    initMsg(` !!! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CAUTION!!! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; !!! `);
-    initMsg(` !!! &nbsp;&nbsp;THIS WILL ERASE THE FIRMWARE ON&nbsp; !!! `);
-    initMsg(` !!! &nbsp;&nbsp;&nbsp;YOUR DEVICE! THIS CAN NOT BE &nbsp;&nbsp; !!! `);
-    initMsg(` !!! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; UNDONE! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; !!! `);
+    initMsg(` !!!             CAUTION!!!             !!! `);
+    initMsg(` !!!  THIS WILL ERASE THE FIRMWARE ON  !!! `);
+    initMsg(` !!!   YOUR DEVICE! THIS CAN NOT BE    !!! `);
+    initMsg(` !!!               UNDONE!             !!! `);
     initMsg(` !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! `);
-    initMsg(` `);
     if (window.confirm("This will erase the entire flash. Click OK to continue.")) {
         butErase.disabled = true;
         butProgram.disabled = true;
@@ -351,14 +193,11 @@ async function clickErase() {
             logMsg("Erasing flash memory. Please wait...");
             let stamp = Date.now();
             await espStub.eraseFlash();
-            logMsg(`Finished. Took <font color="yellow">` + (Date.now() - stamp) + `ms</font> to erase.`);
-            compMsg(" ");
+            logMsg(`Finished. Took ${(Date.now() - stamp)}ms to erase.`);
             compMsg(" ---> ERASING PROCESS COMPLETED!");
-            compMsg(" ");
         } catch (e) {
             errorMsg(e);
         } finally {
-
             butProgram.disabled = false;
         }
     }
@@ -368,13 +207,8 @@ async function clickProgram() {
     const readUploadedFileAsArrayBuffer = (inputFile) => {
         const reader = new FileReader();
         return new Promise((resolve, reject) => {
-            reader.onerror = () => {
-                reader.abort();
-                reject(new DOMException("Problem parsing input file."));
-            };
-            reader.onload = () => {
-                resolve(reader.result);
-            };
+            reader.onerror = () => { reader.abort(); reject(new DOMException("Problem parsing input file.")); };
+            reader.onload = () => { resolve(reader.result); };
             reader.readAsArrayBuffer(inputFile);
         });
     };
@@ -391,6 +225,9 @@ async function clickProgram() {
         "CYDNOGPS": MCYDNOGPSlatestFiles,
         "CYD2USB": MCYD2USBlatestFiles,
         "CYD2USBNOGPS": MCYD2USBNOGPSlatestFiles,
+        "CYD2USB_BRUCE": MCYD2USB_BRUCElatestFiles,   // AJOUT
+        "CYD2USB_MARAUDER": MCYD2USB_MARAUDERlatestFiles, // AJOUT
+        "CYD2USB_HALEHOUND": MCYD2USB_HALEHOUNDlatestFiles, // AJOUT
         "CYD24NOGPS": MCYD24NOGPSlatestFiles,
         "CYD24GPS": MCYD24GPSlatestFiles,
         "CYD24GNOGPS": MCYD24GNOGPSlatestFiles,
@@ -409,187 +246,70 @@ async function clickProgram() {
 
     if (selectedVersion === "latest") {
         selectedFiles = modelFilesMap[selectedModel];
-        if (!selectedFiles) {
-            console.error(`No files found for model: ${selectedModel}`);
-            // Handle the error (e.g., show a message to the user)
-            return;
-        }
-    } else {
-        console.error(`Unsupported version: ${selectedVersion}`);
-        // Handle the error (e.g., show a message to the user)
-        return;
+        if (!selectedFiles) { return; }
     }
 
-    const flashMessages = document.getElementById("flashMessages");
-    // Disable buttons during flashing
     butErase.disabled = true;
     butProgram.disabled = true;
 
-    // Prepare user feedback messages
     initMsg(` `);
     initMsg(` !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! `);
     initMsg(` !!!   FLASHING STARTED! DO NOT UNPLUG   !!! `);
-    initMsg(` !!!    UNTIL FLASHING IS COMPLETE!!    !!! `);
+    initMsg(` !!!    UNTIL FLASHING IS COMPLETE!!     !!! `);
     initMsg(` !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! `);
-    initMsg(` `);
-    flashMessages.innerHTML = "";
 
-    // Calculate total size of all files to flash for progress tracking
     let totalSize = 0;
     let flashedSize = 0;
-    let fileTypes;
-    if (selectedModel === "SYD") {
-        // Include boot_app0 for SYD model
-        fileTypes = ['bootloader', 'partitions', 'boot_app0', 'firmware'];
-    } else {
-        // Other models only have these three
-        fileTypes = ['bootloader', 'partitions', 'firmware'];
-    }
+    let fileTypes = (selectedModel === "SYD") ? ['bootloader', 'partitions', 'boot_app0', 'firmware'] : ['bootloader', 'partitions', 'firmware'];
+
     for (let fileType of fileTypes) {
-        let fileResource = selectedFiles[fileType];
-        let response = await fetch(fileResource, { method: 'HEAD' });
-        let fileSize = response.headers.get('content-length');
-        if (fileSize) {
-            totalSize += parseInt(fileSize, 10);
-        } else {
-            console.error(`Failed to get size for file type: ${fileType}`);
-        }
+        let response = await fetch(selectedFiles[fileType], { method: 'HEAD' });
+        totalSize += parseInt(response.headers.get('content-length') || 0, 10);
     }
 
-    // Function to update the progress bar UI
     const updateProgressBar = (cumulativeFlashedSize) => {
-        if (cumulativeFlashedSize > totalSize) {
-            console.error(`Cumulative flashed size exceeds total size: ${cumulativeFlashedSize} / ${totalSize}`);
-        } else {
-            flashedSize = cumulativeFlashedSize;
-        }
-        const progressPercentage = Math.min((flashedSize / totalSize) * 100, 100);
-        const progressBar = document.getElementById("progress");
-        if (progressBar) {
-            progressBar.style.width = `${progressPercentage}%`;
-        }
+        const progressPercentage = Math.min((cumulativeFlashedSize / totalSize) * 100, 100);
+        if (progress) progress.style.width = `${progressPercentage}%`;
     };
 
+    const cydOffsets = [0x1000, 0x8000, 0x10000];
     const offsetsMap = {
         "SYD": [0x0, 0x8000, 0xE000, 0x10000],
-        "CYD": [0x1000, 0x8000, 0x10000],
-        "CYDNOGPS": [0x1000, 0x8000, 0x10000],
-        "CYD2USB": [0x1000, 0x8000, 0x10000],
-        "CYD2USBNOGPS": [0x1000, 0x8000, 0x10000],
-        "CYD24GPS": [0x1000, 0x8000, 0x10000],
-        "CYD24NOGPS": [0x1000, 0x8000, 0x10000],
-        "CYD24GGPS": [0x1000, 0x8000, 0x10000],
-        "CYD24GNOGPS": [0x1000, 0x8000, 0x10000],
-        "CYD24CAPGPS": [0x1000, 0x8000, 0x10000],
-        "CYD24CAPNOGPS": [0x1000, 0x8000, 0x10000],
-        "CYD35GPS": [0x1000, 0x8000, 0x10000],
-        "CYD35NOGPS": [0x1000, 0x8000, 0x10000],
-        "CYD35CAPGPS": [0x1000, 0x8000, 0x10000],
-        "CYD35CAPNOGPS": [0x1000, 0x8000, 0x10000],
-        "CYD32GPS": [0x1000, 0x8000, 0x10000],
-        "CYD32NOGPS": [0x1000, 0x8000, 0x10000],
-        "CYD32CAPGPS": [0x1000, 0x8000, 0x10000],
-        "CYD32CAPNOGPS": [0x1000, 0x8000, 0x10000]
+        "CYD": cydOffsets, "CYDNOGPS": cydOffsets, "CYD2USB": cydOffsets, "CYD2USBNOGPS": cydOffsets,
+        "CYD2USB_BRUCE": cydOffsets, "CYD2USB_MARAUDER": cydOffsets, "CYD2USB_HALEHOUND": cydOffsets, // AJOUTS
+        "CYD24GPS": cydOffsets, "CYD24NOGPS": cydOffsets, "CYD24GGPS": cydOffsets, "CYD24GNOGPS": cydOffsets,
+        "CYD24CAPGPS": cydOffsets, "CYD24CAPNOGPS": cydOffsets, "CYD35GPS": cydOffsets, "CYD35NOGPS": cydOffsets,
+        "CYD35CAPGPS": cydOffsets, "CYD35CAPNOGPS": cydOffsets, "CYD32GPS": cydOffsets, "CYD32NOGPS": cydOffsets,
+        "CYD32CAPGPS": cydOffsets, "CYD32CAPNOGPS": cydOffsets
     };
 
-    // Flash each file in sequence at the specified offsets
-    for (let fileType of fileTypes) {
-        let fileResource = selectedFiles[fileType];
-        let offset = offsetsMap[selectedModel][fileTypes.indexOf(fileType)];
-        try {
-            // Fetch the binary data for the file
-            let binFile = new File([await fetch(fileResource).then(r => r.blob())], fileType + ".bin");
-            let contents = await readUploadedFileAsArrayBuffer(binFile);
+    let cumulativeFlashed = 0;
+    for (let i = 0; i < fileTypes.length; i++) {
+        let fileType = fileTypes[i];
+        let offset = offsetsMap[selectedModel][i];
+        let binBlob = await fetch(selectedFiles[fileType]).then(r => r.blob());
+        let contents = await readUploadedFileAsArrayBuffer(new File([binBlob], "file.bin"));
 
-            // Flash the binary data to the device at the given offset
-            await espStub.flashData(
-                contents,
-                (cumulativeFlashedSize) => updateProgressBar(cumulativeFlashedSize),
-                offset
-            );
+        await espStub.flashData(contents, (fileProgress) => {
+            updateProgressBar(cumulativeFlashed + fileProgress);
+        }, offset);
 
-            // Update progress to full for this file and announce completion
-            updateProgressBar(totalSize);
-            annMsg(` ---> Finished flashing ${fileType}.`);
-            annMsg(` `);
-            await sleep(100);
-        } catch (e) {
-            errorMsg(e);
-        }
+        cumulativeFlashed += contents.byteLength;
+        annMsg(` ---> Finished flashing ${fileType}.`);
     }
 
-    // Close the progress dialog and re-enable buttons after flashing all files
     progressBarDialog.remove();
     butErase.disabled = false;
     butProgram.disabled = false;
-    flashMessages.style.display = "none";
     compMsg(" ---> FLASHING PROCESS COMPLETED!");
-    compMsg(" ");
-    logMsg("Restart the board or disconnect to use the device.");
-}
-        
-async function clickClear() {
-    log.innerHTML = "";
 }
 
-function convertJSON(chunk) {
-    try {
-        let jsonObj = JSON.parse(chunk);
-        return jsonObj;
-    } catch (e) {
-        return chunk;
-    }
-}
-
-function toggleUIToolbar(show) {
-    isConnected = show;
-    if (show) {
-        appDiv.classList.add("connected");
-    } else {
-        appDiv.classList.remove("connected");
-    }
-    butErase.disabled = !show;
-}
-
+async function clickClear() { log.innerHTML = ""; }
+function toggleUIToolbar(show) { appDiv.classList.toggle("connected", show); butErase.disabled = !show; }
 function toggleUIConnected(connected) {
-    let label = "Connect";
-    let iconClass = "fas fa-plug"; // Default icon for "Connect"
-    let iconHtml = `<i class="${iconClass}"></i>`;
-
-    if (connected) {
-        label = "Disconnect";
-        iconClass = "far fa-window-close red-icon"; // Change icon for "Disconnect" and apply red color
-        iconHtml = `<i class="${iconClass}"></i>`; // Redefine the icon HTML with the red class
-    } else {
-        toggleUIToolbar(false);
-    }
-
-    // Update the button's HTML with the new icon and label
-    document.getElementById('butConnect').innerHTML = `${iconHtml} ${label}`;
+    let icon = connected ? `<i class="far fa-window-close red-icon"></i> Disconnect` : `<i class="fas fa-plug"></i> Connect`;
+    butConnect.innerHTML = icon;
+    if (!connected) toggleUIToolbar(false);
 }
-
-function loadSetting(setting, defaultValue) {
-    let value = JSON.parse(window.localStorage.getItem(setting));
-    if (value == null) {
-        return defaultValue;
-    }
-
-    return value;
-}
-
-function saveSetting(setting, value) {
-    window.localStorage.setItem(setting, JSON.stringify(value));
-}
-
-function ucWords(text) {
-    return text
-        .replace("_", " ")
-        .toLowerCase()
-        .replace(/(?<= )[^\s]|^./g, (a) => a.toUpperCase());
-}
-
-function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-
+function saveSetting(setting, value) { window.localStorage.setItem(setting, JSON.stringify(value)); }
+function debugMsg() {} // Placeholder pour éviter les erreurs si appelé
